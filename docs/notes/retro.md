@@ -4,7 +4,7 @@
 - **Phase 1 (Đêm 1):** lõi mô phỏng tất định, headless, bằng chứng từ CLI thật. Mạnh: test đỏ trước, bằng chứng chạy hai lần so sha256.
 - **Phase 2 (ba Đêm):** sửa lỗi đơn vị (giây và tick), thứ tự cạnh nhấn, điểm hồi sinh. Đây là phase nhiều lỗi nhất; test đỏ trước bắt được hầu hết.
 - **Phase 3 (đèn cạn dầu):** đổi luật thắng và điểm; cần sửa 6 test cũ có lý do. Phát hiện scenario đặt sai vị trí làm bằng chứng sai, và lỗi "đầy dầu" do hao một tick.
-- **Phase 4 (phát hành):** bảng xếp hạng, soak, bench, cài đặt, âm thanh, E2E trên Chrome thật (17/17), video demo. Bench chính thức (vsync tắt) và soak chưa đạt ngưỡng trên máy này; nguyên nhân ghi trong đánh giá.
+- **Phase 4 (phát hành):** bảng xếp hạng, soak, bench, cài đặt, âm thanh, E2E trên Chrome thật (17/17), video demo. Bench theo yêu cầu (vsync tắt) chưa đạt ngưỡng trên máy này. Soak đạt với `--jitless` nhưng chế độ mặc định vượt ngưỡng bộ nhớ. Nguyên nhân ghi trong đánh giá.
 
 ## Điều hiệu quả và không hiệu quả khi làm với AI
 - Hiệu quả: viết test theo mã AC trước rồi code; ghi giả định cho mọi chỗ mơ hồ; bằng chứng sinh bằng script từ CLI thật, không sửa tay.

@@ -14,3 +14,7 @@
 ## Chưa đạt
 - Trình duyệt chưa kiểm chứng (xem trên).
 - Hiệu chỉnh cảm giác hút dầu (5/s) và tỉ lệ thắng (0.6) chưa thử chơi thật.
+
+## Token và chi phí
+
+Xem [token-usage.md](token-usage.md).

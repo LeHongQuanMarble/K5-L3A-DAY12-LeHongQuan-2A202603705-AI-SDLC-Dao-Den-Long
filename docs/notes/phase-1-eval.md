@@ -38,3 +38,7 @@ Tag: `phase-1`. Yêu cầu: PRD-0 và Test Contract v1.0 trên lab board.
 2. Trước khi code, viết kế hoạch kiểm chứng cho phần mới.
 3. Chạy lại toàn bộ `npm test` và `npm run evidence` sau khi tích hợp để chứng minh phần cũ không hỏng.
 4. Rà soát `AGENTS.md`: thêm dòng nếu AI lặp lại một lỗi.
+
+## Token và chi phí
+
+Xem [token-usage.md](token-usage.md).

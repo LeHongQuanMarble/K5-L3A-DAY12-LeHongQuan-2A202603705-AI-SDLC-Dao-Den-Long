@@ -14,4 +14,4 @@
 | A-P4-10 | Giảm chuyển động | Tắt chớp màn hình (không có rung camera trong bản này) | Chỉ có chớp màn hình để tắt |
 | A-P4-11 | Âm thanh | Không làm trong Phase 4 (ghi rõ ở đánh giá) | Không có asset và ngân sách thời gian; không giả vờ có |
 | A-P4-12 | Vsync | Bench khởi chạy Chrome với `--disable-gpu-vsync --disable-frame-rate-limit`; ghi `vsync_off: true` | Ticket: tắt vsync nếu engine cho phép |
-| A-P4-13 | Số đo | Bench trong phiên này chạy trên SwiftShader (render bằng CPU), không phải GPU | Số chỉ để tham khảo; máy chấm sẽ đo lại |
+| A-P4-13 | Số đo | Lần đo đầu chạy trên SwiftShader (render bằng CPU), cho 1.9 fps, không dùng làm kết quả. Số cuối đo trên iGPU Intel (GPU thật, Vulkan/Mesa) | Số chỉ để tham khảo; máy chấm sẽ đo lại |

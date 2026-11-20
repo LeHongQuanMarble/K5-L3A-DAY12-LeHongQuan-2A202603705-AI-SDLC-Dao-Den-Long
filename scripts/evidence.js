@@ -1,4 +1,4 @@
-// Chạy bộ kịch bản headless bằng đúng CLI và ghi bằng chứng vào docs/proof/phase-1/.
+// Chạy bộ kịch bản headless bằng đúng CLI và ghi bằng chứng vào docs/proof/phase-3/.
 // Mỗi lần chạy được thực hiện hai lần để kiểm tra tính tất định (sha256 phải giống nhau).
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';

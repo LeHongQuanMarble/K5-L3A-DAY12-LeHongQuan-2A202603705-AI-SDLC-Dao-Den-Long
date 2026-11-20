@@ -5,7 +5,9 @@
 
 ![Cảnh benchmark Đêm 1, 1280×720](docs/proof/phase-4/bench-scene-1280x720.png)
 
-**Trạng thái:** v1.0.0 (Phase 4). Tag `phase-1` … `phase-4`. Các mục còn thiếu được ghi ở [docs/notes/phase-4-eval.md](docs/notes/phase-4-eval.md).
+**Trạng thái:** v1.0.0 (Phase 4). Tag `phase-1` … `phase-4`.
+
+**Chưa đạt (ghi trung thực):** bench theo yêu cầu ticket (vsync tắt) chưa đạt ngưỡng FPS trên iGPU này; soak ở chế độ mặc định vượt ngưỡng bộ nhớ. Chi tiết: [Còn thiếu](#còn-thiếu-ghi-trung-thực) và [docs/notes/phase-4-eval.md](docs/notes/phase-4-eval.md).
 
 ## Mô tả
 
@@ -73,24 +75,31 @@ node bin/headless.js --seed 1 --night 1 --ticks 600 --out run.jsonl \
 node --expose-gc bin/bench.js --seed 42 --duration 30 --out bench.json
 ```
 
-Cảnh chuẩn: Đêm 1, 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng, Mây đứng yên, camera vòng tròn 30 m ở Y = 15, 15 s một vòng. Ngưỡng trên máy chấm: avg_fps ≥ 60, p1_low_fps ≥ 30, load_ms ≤ 10000. Vsync được tắt (`vsync_off: true`).
+Cảnh chuẩn: Đêm 1, 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng, Mây đứng yên, camera vòng tròn 30 m ở Y = 15, 15 s một vòng. Ngưỡng trên máy chấm: avg_fps ≥ 60, p1_low_fps ≥ 30, load_ms ≤ 10000. Cấu hình theo ticket là vsync tắt (`vsync_off: true`).
 
-**Kết quả đo (iGPU Intel Iris Xe, Chrome headless, 30 s):**
+**Kết quả đo (iGPU Intel Iris Xe, Chrome headless, 30 s, seed 42):**
 
-| Chế độ | avg_fps | p1_low_fps | frame_ms_p95 | Ghi chú |
-|---|---|---|---|---|
-| Chính thức, vsync bật (`--vsync 1`, vì vsync tắt không khả dụng trên driver iGPU này, xem ghi chú) | 60.0 | 59.5 | 16.8 | [bench.json](docs/proof/phase-4/bench.json) |
-| Vsync tắt (đúng yêu cầu ticket) | 365.6 | 4.4 | 1.2 | [bench-vsync-off.json](docs/proof/phase-4/bench-vsync-off.json). Dừng 200–500 ms định kỳ từ driver GPU |
+| Chế độ | Trạng thái | avg_fps | p1_low_fps | frame_ms_p95 | Bằng chứng |
+|---|---|---|---|---|---|
+| Theo yêu cầu ticket: vsync tắt | **Chưa đạt** (p1 < 30). Có các đợt dừng 200–500 ms định kỳ từ driver GPU | 365.6 | 4.4 | 1.2 | [bench-vsync-off.json](docs/proof/phase-4/bench-vsync-off.json) |
+| Tham khảo: vsync bật (`--vsync 1`) | Đạt ngưỡng trên máy này, **không** phải kết quả theo yêu cầu | 60.0 | 59.5 | 16.8 | [bench.json](docs/proof/phase-4/bench.json) (ghi `targets_met: true` vì đo ở chế độ vsync bật) |
 
 Chi tiết nguyên nhân và cách đo lại: [docs/notes/phase-4-eval.md](docs/notes/phase-4-eval.md). Máy chấm sẽ đo lại trên cấu hình của giảng viên.
 
 ### Soak
 
 ```bash
-node --expose-gc bin/soak.js --seed 7 --nights 10 --out soak.json
+npm run soak     # = node --expose-gc --jitless bin/soak.js --seed 7 --nights 10 --out soak.json
 ```
 
-Chạy 10 Đêm liên tiếp trong một tiến trình. Kết quả: [docs/proof/phase-4/soak.json](docs/proof/phase-4/soak.json). Crash = 0; bộ nhớ tăng 51 → 67 MB, vượt ngưỡng 1.2× (heap JavaScript phẳng, phần tăng là bộ nhớ tiến trình một lần khi biên dịch; xem đánh giá).
+Chạy 10 Đêm liên tiếp trong một tiến trình, với `--jitless` (đúng lệnh `npm run soak` và `soak_cmd` trong contract). Crash = 0 ở cả hai chế độ:
+
+| Chế độ | Bộ nhớ đầu → cuối | Ngưỡng mem_end ≤ 1.2 × mem_start | Bằng chứng |
+|---|---|---|---|
+| `--jitless` (lệnh chuẩn) | 48.3 → 51.7 MB | đạt | [soak.json](docs/proof/phase-4/soak.json) |
+| Mặc định (có JIT) | 51.1 → 67.4 MB | **vượt ngưỡng** | [soak-jit-default.json](docs/proof/phase-4/soak-jit-default.json) |
+
+Phần tăng ở chế độ mặc định là bộ nhớ V8 cấp một lần khi biên dịch JIT, heap JavaScript phẳng. Đây là giải thích, không phải lý do để coi là đạt. Xem [đánh giá](docs/notes/phase-4-eval.md).
 
 ### Bảng xếp hạng
 
@@ -127,13 +136,15 @@ CHANGELOG.md, CREDITS.md, LICENSE, AGENTS.md
 
 ## Còn thiếu (ghi trung thực)
 
-- Ngưỡng FPS với vsync tắt (p1 ≥ 30) chưa đạt trên iGPU này; ngưỡng đạt với vsync bật.
-- Soak đạt ở chế độ `--jitless`; ở chế độ mặc định vẫn vượt ngưỡng RSS.
+- Bench theo yêu cầu (vsync tắt, p1 ≥ 30) **chưa đạt** trên iGPU này. Chỉ bản vsync bật đạt ngưỡng, và đó chỉ là số tham khảo.
+- Soak đạt với `--jitless` (lệnh chuẩn); chế độ mặc định có JIT vượt ngưỡng bộ nhớ.
 - Chưa kiểm tra trên Windows và macOS; chưa đo trên máy chấm của giảng viên.
 
 ## Sáng tạo của tôi
 
 Đoạn giới thiệu từng Đêm (văn bản do tôi viết), âm thanh tổng hợp, và bảng màu theo ticket. Luật và số liệu không đổi so với ticket.
+
+Bằng chứng: màn giới thiệu [03-intro.png](docs/proof/phase-4/e2e/03-intro.png), bảng xếp hạng [06-leaderboard.png](docs/proof/phase-4/e2e/06-leaderboard.png), cài đặt [02-settings.png](docs/proof/phase-4/e2e/02-settings.png). Các luồng này nằm trong E2E 17/17 ([e2e.json](docs/proof/phase-4/e2e/e2e.json)). Âm thanh tổng hợp bằng mã (`web/audio.js`), không dùng file ngoài; E2E không kiểm tra âm thanh.
 
 ## Giấy phép và nguồn
 

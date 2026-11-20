@@ -1,14 +1,14 @@
 # AGENTS.md: hướng dẫn cho agent AI
 
-Dự án: **Đảo Đèn Lồng**, game 3D trên three.js với lõi mô phỏng thuần JS và chế độ headless theo Test Contract v1.0.
+Dự án: **Đảo Đèn Lồng**, game 3D trên three.js với lõi mô phỏng thuần JS và chế độ headless theo Test Contract v1.3.
 
 ## Lệnh
 
 - `npm test`: toàn bộ test (node:test). Dùng lệnh này, **đừng** chạy `node --test tests/` vì Node 24 coi thư mục là một file.
 - `npm run check`: kiểm tra cú pháp các file JS.
-- `npm run evidence`: chạy các kịch bản headless bằng CLI thật và ghi `docs/proof/phase-2/`. **Không sửa tay** các file trong `docs/proof/`.
+- `npm run evidence`: chạy các kịch bản headless bằng CLI thật và ghi `docs/proof/phase-3/`. **Không sửa tay** các file trong `docs/proof/`.
 - `npm run contract`: sinh lại `game.contract.json` từ `src/tuning.js` và `SCORE`. Không sửa tay file này.
-- `npm run bench`: đo hiệu năng trong Chrome headless (cần `google-chrome`). `npm run soak`: soak 10 Đêm headless.
+- `npm run bench`: đo hiệu năng trong Chrome headless (cần `google-chrome`); cấu hình theo ticket là vsync tắt, xem `docs/notes/phase-4-eval.md`. `npm run soak`: soak 10 Đêm headless, có `--jitless`. `npm run e2e`: kiểm thử trình duyệt thật (cần `google-chrome`), không nằm trong `npm test`.
 - `node bin/game.js --export-leaderboard out.json`: xuất bảng xếp hạng đã lưu.
 - `npm start`: máy chủ tĩnh tại http://127.0.0.1:8080 (tự chuyển về `/web/`).
 - `node bin/headless.js --seed <n> --night 1|2|3 --ticks <n> --out <file>`: chạy headless.
@@ -27,9 +27,7 @@ Dự án: **Đảo Đèn Lồng**, game 3D trên three.js với lõi mô phỏng
 
 ## Phạm vi hiện tại
 
-Phase 2 (Ticket-02, Contract v1.1): ba Đêm, lướt, bục nhảy, rơi, Gió Lạc, Bùa Gió, gió Đêm 3, tạm dừng. Spec: `specs/phase-2/spec.md`. Giả định: `docs/notes/phase-2-assumptions.md`. Breaking changes: `CHANGELOG.md`.
-
-Phase 4 (Ticket-04, v1.0.0): spec `specs/phase-4/`, giả định `docs/notes/phase-4-assumptions.md`. Phase 4 là phase cuối.
+Đã hoàn thành Phase 4 (Ticket-04, v1.0.0, Contract v1.3), phase cuối. Mỗi phase có spec và giả định riêng: `specs/phase-N/`, `docs/notes/phase-N-assumptions.md`. Breaking changes: `CHANGELOG.md`. Đánh giá và các mục chưa đạt: `docs/notes/phase-4-eval.md`.
 
 ## Quy tắc Phase 2+
 
