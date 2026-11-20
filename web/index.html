@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đảo Đèn Lồng</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #07061a; color: #f5e6c8; font-family: system-ui, sans-serif; }
+    canvas { display: block; }
+    #hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; text-shadow: 0 1px 3px #000; }
+    #stats { background: rgba(7,6,26,.6); padding: 8px 12px; border-radius: 8px; line-height: 1.6; }
+    #stats b { color: #ffc766; }
+    #msg { margin-top: 8px; min-height: 1.4em; color: #ffe2a8; }
+    #help { position: fixed; bottom: 10px; left: 12px; font-size: 13px; opacity: .8; background: rgba(7,6,26,.6); padding: 6px 10px; border-radius: 8px; }
+    #over { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7,6,26,.75); }
+    #over[hidden] { display: none; }
+    #over h1 { font-size: 36px; margin: 0 0 8px; color: #ffc766; }
+    #over p { margin: 4px 0 16px; }
+    button { font: inherit; padding: 10px 18px; border: 0; border-radius: 8px; background: #ffc766; color: #2a1d05; cursor: pointer; }
+    #flash { position: fixed; inset: 0; background: rgba(120, 20, 160, .45); opacity: 0; pointer-events: none; transition: opacity .4s; }
+    @media (max-width: 600px) { #help { font-size: 12px; } #over h1 { font-size: 26px; } }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    <div id="stats">
+      Đom đóm: <b id="carried">0</b>/5 &nbsp;·&nbsp; Đèn sáng: <b id="lit">0</b>/5<br>
+      Ngọn lửa: <b id="hp">3</b> &nbsp;·&nbsp; Còn lại: <b id="time">3:00</b> &nbsp;·&nbsp; Điểm: <b id="score">0</b>
+    </div>
+    <div id="msg"></div>
+  </div>
+  <div id="help">WASD di chuyển · ←/→ xoay camera · Space nhảy · E thắp đèn · F tỏa sáng · R chơi lại</div>
+  <div id="flash"></div>
+  <div id="over" hidden>
+    <h1 id="over-title"></h1>
+    <p id="over-text"></p>
+    <button id="replay">Chơi lại (R)</button>
+  </div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
