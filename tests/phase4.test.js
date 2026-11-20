@@ -161,3 +161,12 @@ test('AC-P4-08 settings round-trip through JSON and bad data falls back to defau
   const dup = parseSettings(JSON.stringify({ keys: { jump: 'KeyE' } }));
   assert.deepEqual(dup.keys, DEFAULT_KEYS, 'duplicate keys in storage -> defaults');
 });
+
+test('AC-P4-08 volume and mouse sensitivity are kept within range', () => {
+  const s = parseSettings(JSON.stringify({ volume: 0.25, sensitivity: 2 }));
+  assert.equal(s.volume, 0.25);
+  assert.equal(s.sensitivity, 2);
+  const bad = parseSettings(JSON.stringify({ volume: 9, sensitivity: 0 }));
+  assert.equal(bad.volume, DEFAULT_SETTINGS.volume);
+  assert.equal(bad.sensitivity, DEFAULT_SETTINGS.sensitivity);
+});

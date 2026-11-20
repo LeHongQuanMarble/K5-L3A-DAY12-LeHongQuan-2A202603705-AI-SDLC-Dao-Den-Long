@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && npm run check --silent >/dev/null 2>&1 || echo 'Hook: npm run check thất bại sau lần sửa này. Sửa cú pháp trước khi tiếp tục.' >&2"
+          }
+        ]
+      }
+    ]
+  }
+}

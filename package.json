@@ -16,6 +16,7 @@
     "contract": "node scripts/write-contract.js",
     "bench": "node --expose-gc bin/bench.js",
     "soak": "node --expose-gc bin/soak.js --seed 7 --nights 10 --out soak.json",
-    "export-leaderboard": "node bin/game.js --export-leaderboard"
+    "export-leaderboard": "node bin/game.js --export-leaderboard",
+    "e2e": "node tests/e2e/run.mjs"
   }
 }

@@ -1,0 +1,23 @@
+# CI: chạy cú pháp, toàn bộ test và kiểm tra contract mỗi lần push hoặc mở pull request.
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm run check
+      - run: npm test
+      - name: Headless evidence reproduces byte-for-byte
+        run: |
+          node bin/headless.js --seed 1 --night 1 --ticks 600 --out /tmp/a.jsonl
+          node bin/headless.js --seed 1 --night 1 --ticks 600 --out /tmp/b.jsonl
+          cmp /tmp/a.jsonl /tmp/b.jsonl

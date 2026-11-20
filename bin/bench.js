@@ -17,6 +17,7 @@ const out = val('--out', 'bench.json');
 const PORT = Number(val('--port', '8765'));
 const DEBUG_PORT = 9333 + (process.pid % 500);
 const CHROME = process.env.CHROME ?? 'google-chrome';
+const VSYNC_ON = val('--vsync', '0') === '1'; // mặc định tắt vsync theo ticket; --vsync 1 để đo tham khảo
 const T0 = Date.now(); // gần đúng lúc tiến trình bắt đầu, dùng cho load_ms
 
 if (!Number.isInteger(seed) || !(duration > 0)) {
@@ -51,7 +52,7 @@ async function main() {
   const chrome = spawn(CHROME, [
     '--headless=new', `--remote-debugging-port=${DEBUG_PORT}`, `--user-data-dir=${profile}`,
     '--window-size=1280,720', '--no-first-run', '--no-default-browser-check',
-    '--disable-gpu-vsync', '--disable-frame-rate-limit', '--enable-unsafe-swiftshader', '--use-angle=swiftshader',
+    ...(VSYNC_ON ? [] : ['--disable-gpu-vsync', '--disable-frame-rate-limit']), ...(process.env.BENCH_GPU === '0' ? ['--enable-unsafe-swiftshader', '--use-angle=swiftshader'] : ['--ignore-gpu-blocklist', '--enable-gpu-rasterization', '--use-gl=angle', '--use-angle=vulkan']),
     'about:blank',
   ], { stdio: 'ignore' });
 
@@ -100,7 +101,7 @@ async function main() {
       frames: stats.frames,
       load_ms,
       peak_mem_mb: peak > 0 ? Math.round(peak) : null,
-      vsync_off: true,
+      vsync_off: !VSYNC_ON,
       renderer: result.renderer,
       os: `${type()} ${release()} ${arch()}; ${cpus()[0]?.model ?? 'cpu'} x${cpus().length}; RAM ${Math.round(totalmem() / 1048576)} MB`,
       targets_met: meetsTargets({ ...stats, load_ms }),

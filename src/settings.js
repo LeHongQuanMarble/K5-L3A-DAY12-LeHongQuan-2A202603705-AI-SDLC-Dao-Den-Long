@@ -21,6 +21,8 @@ export const DEFAULT_SETTINGS = Object.freeze({
   reducedMotion: false,
   largeText: false,
   colorblind: false,
+  volume: 0.5,        // 0..1
+  sensitivity: 1,     // độ nhạy chuột kéo camera: 0.2..3
 });
 
 // Trả về tên hành động đang dùng phím `code` (trừ `except`), hoặc null nếu trống.
@@ -61,6 +63,8 @@ export function parseSettings(text) {
     for (const k of ['reducedMotion', 'largeText', 'colorblind']) {
       if (typeof data[k] === 'boolean') out[k] = data[k];
     }
+    if (typeof data.volume === 'number' && data.volume >= 0 && data.volume <= 1) out.volume = data.volume;
+    if (typeof data.sensitivity === 'number' && data.sensitivity >= 0.2 && data.sensitivity <= 3) out.sensitivity = data.sensitivity;
   }
   return out;
 }
