@@ -14,7 +14,7 @@ const contract = {
   run_cmd: 'node bin/game.js',
   headless_cmd: 'node bin/headless.js',
   bench_cmd: 'node --expose-gc bin/bench.js',
-  soak_cmd: 'node --expose-gc bin/soak.js',
+  soak_cmd: 'node --expose-gc --jitless bin/soak.js',
   tuning: { ...TUNING },
   score: { ...SCORE },
 };

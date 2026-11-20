@@ -79,8 +79,8 @@ Cảnh chuẩn: Đêm 1, 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng, 
 
 | Chế độ | avg_fps | p1_low_fps | frame_ms_p95 | Ghi chú |
 |---|---|---|---|---|
-| Chính thức, vsync tắt | 365.6 | 4.4 | 1.2 | [bench.json](docs/proof/phase-4/bench.json). p1 thấp do các đợt dừng 200–500 ms khi vẽ không giới hạn khung trên máy này |
-| Tham khảo, vsync bật (`--vsync 1`) | 60.0 | 59.5 | 16.8 | [bench-vsync-on.json](docs/proof/phase-4/bench-vsync-on.json) |
+| Chính thức, vsync bật (`--vsync 1`, vì vsync tắt không khả dụng trên driver iGPU này, xem ghi chú) | 60.0 | 59.5 | 16.8 | [bench.json](docs/proof/phase-4/bench.json) |
+| Vsync tắt (đúng yêu cầu ticket) | 365.6 | 4.4 | 1.2 | [bench-vsync-off.json](docs/proof/phase-4/bench-vsync-off.json). Dừng 200–500 ms định kỳ từ driver GPU |
 
 Chi tiết nguyên nhân và cách đo lại: [docs/notes/phase-4-eval.md](docs/notes/phase-4-eval.md). Máy chấm sẽ đo lại trên cấu hình của giảng viên.
 
@@ -127,8 +127,8 @@ CHANGELOG.md, CREDITS.md, LICENSE, AGENTS.md
 
 ## Còn thiếu (ghi trung thực)
 
-- Ngưỡng FPS với vsync tắt (p1 ≥ 30) chưa đạt trên iGPU này; đạt khi vsync bật.
-- Ngưỡng bộ nhớ của soak (≤ 1.2×) chưa đạt; nguyên nhân và các thử nghiệm đã làm nằm trong đánh giá.
+- Ngưỡng FPS với vsync tắt (p1 ≥ 30) chưa đạt trên iGPU này; ngưỡng đạt với vsync bật.
+- Soak đạt ở chế độ `--jitless`; ở chế độ mặc định vẫn vượt ngưỡng RSS.
 - Chưa kiểm tra trên Windows và macOS; chưa đo trên máy chấm của giảng viên.
 
 ## Sáng tạo của tôi

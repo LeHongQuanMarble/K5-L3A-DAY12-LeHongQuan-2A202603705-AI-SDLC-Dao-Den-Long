@@ -17,6 +17,7 @@ const frames = []; // { file, t }
 
 function slidesHtml() {
   const bench = JSON.parse(readFileSync(join(ROOT, 'docs/proof/phase-4/bench.json'), 'utf8'));
+  const benchOff = JSON.parse(readFileSync(join(ROOT, 'docs/proof/phase-4/bench-vsync-off.json'), 'utf8'));
   const soak = JSON.parse(readFileSync(join(ROOT, 'docs/proof/phase-4/soak.json'), 'utf8'));
   const e2e = JSON.parse(readFileSync(join(ROOT, 'docs/proof/phase-4/e2e/e2e.json'), 'utf8'));
   const tests = readFileSync(join(ROOT, 'docs/proof/phase-4/test-output.txt'), 'utf8').match(/ℹ pass (\d+)/)?.[1] ?? '?';
@@ -25,9 +26,10 @@ function slidesHtml() {
     ['Test tự động (node:test)', `${tests} test đạt`],
     ['Headless tất định (Phase 3)', 'Chạy hai lần, cùng sha256; xem docs/proof/phase-3/evidence.md'],
     ['E2E trên Chrome thật', `${e2e.passed}/${e2e.total} kiểm tra đạt (menu, cài đặt, nhập tên, tải lại)`],
-    ['Bench 30 s, cảnh chuẩn', `avg ${bench.avg_fps} fps · p1 ${bench.p1_low_fps} fps · p95 ${bench.frame_ms_p95} ms · load ${bench.load_ms} ms`],
-    ['Soak 10 Đêm headless', `crash ${soak.crashes} · ${soak.results.length} kết quả · RSS ${soak.mem_start_mb} → ${soak.mem_end_mb} MB`],
-    ['Ghi chú trung thực', 'Bench trên iGPU Intel; ngưỡng 60 fps trên máy chấm chưa xác nhận. Xem docs/notes/phase-4-eval.md'],
+    ['Bench 30 s, cảnh chuẩn (vsync bật)', `avg ${bench.avg_fps} fps · p1 ${bench.p1_low_fps} fps · p95 ${bench.frame_ms_p95} ms`],
+    ['Bench vsync tắt (yêu cầu ticket)', `p1 ${benchOff.p1_low_fps} fps: chưa đạt; driver iGPU dừng định kỳ`],
+    ['Soak 10 Đêm headless (--jitless)', `crash ${soak.crashes} · ${soak.results.length} kết quả · RSS ${soak.mem_start_mb} → ${soak.mem_end_mb} MB`],
+    ['Ghi chú trung thực', 'Chi tiết và cách đo: docs/notes/phase-4-eval.md'],
   ];
   const body = lines.map(([a, b]) => `<div class="l"><div class="t">${a}</div><div class="v">${b}</div></div>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><style>

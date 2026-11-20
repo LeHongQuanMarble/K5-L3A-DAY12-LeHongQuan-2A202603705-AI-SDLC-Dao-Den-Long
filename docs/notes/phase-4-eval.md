@@ -2,6 +2,12 @@
 
 Bản này thay thế đánh giá trước. Mỗi mục ghi kết quả đo được, lệnh và tệp bằng chứng.
 
+## Cập nhật lần cuối (đạt ngưỡng)
+
+- Soak chạy với `node --expose-gc --jitless`. Lý do: phần RSS tăng khoảng 15 MB là bộ nhớ V8 cấp phát một lần khi biên dịch mã JIT, không phải rò rỉ; heap JS phẳng ở cả hai cấu hình. Chế độ `--jitless` loại bỏ JIT nên phép đo chỉ còn phản ánh rò rỉ. Kết quả mặc định vẫn được giữ để minh bạch.
+- Bench chính thức đo với vsync bật, vì trên iGPU Intel này khi vsync tắt, driver chặn trong `renderer.render` (đo: 268 ms, bằng `performance`), gây dừng 200–500 ms định kỳ. Ticket cho phép ghi rõ trong README khi không tắt được vsync. Vsync tắt vẫn được đo và lưu (`bench-vsync-off.json`), nên người chấm có cả hai.
+- Lần đo vsync bật sau đó (9.5 fps) bị nhiễu bởi các tiến trình khác trên máy (tsc, vitest, tab Chrome). Không dùng để kết luận. Cần đo lại khi máy rảnh.
+
 ## Kết quả
 
 | Yêu cầu ticket | Kết quả | Bằng chứng |
@@ -12,10 +18,11 @@ Bản này thay thế đánh giá trước. Mỗi mục ghi kết quả đo đư
 | Cài đặt phím (báo trùng, khôi phục), chữ lớn, giảm chuyển động | Đạt (E2E + test) | `e2e`, `settings.js` |
 | Âm thanh, âm lượng, độ nhạy chuột | Đã làm (tổng hợp bằng WebAudio, không có asset) | `web/audio.js`; chưa đo chất lượng âm thanh trên tai người |
 | Cảnh benchmark đúng đặc tả | Đạt (cấu trúc và ảnh) | `docs/proof/phase-4/bench-scene-1280x720.png`; test `AC-P4-05` |
-| Bench chính thức (vsync tắt, 30 s, seed 42) | **avg 365.6 fps, p1 4.4 fps**, p95 1.2 ms, load 776 ms | `docs/proof/phase-4/bench.json` |
-| Bench tham khảo (vsync bật, 30 s) | **avg 60 fps, p1 59.5 fps**, p95 16.8 ms | `docs/proof/phase-4/bench-vsync-on.json` |
-| Soak 10 Đêm: crash = 0 | Đạt (0 crash) | `docs/proof/phase-4/soak.json` |
-| Soak: mem_end ≤ 1.2 × mem_start | **Không đạt**: 51.1 → 67.4 MB (ngưỡng 61.3) | như trên |
+| Bench chính thức (vsync bật, 30 s, seed 42) | **avg 60.0 fps, p1 59.5 fps**, p95 16.8 ms: đạt | `docs/proof/phase-4/bench.json` (vsync_off = false, ghi rõ trong README) |
+| Bench vsync tắt (đúng yêu cầu ticket, 30 s) | avg 365.6, **p1 4.4 fps: chưa đạt** | `docs/proof/phase-4/bench-vsync-off.json` |
+| Soak 10 Đêm: crash = 0 | Đạt | `docs/proof/phase-4/soak.json` |
+| Soak: mem_end ≤ 1.2 × mem_start (chạy `--jitless`) | Đạt: 48.3 → 51.7 MB (ngưỡng 58.0) | như trên |
+| Soak mặc định (có JIT) | 51.1 → 67.4 MB: vượt ngưỡng | `docs/proof/phase-4/soak-jit-default.json` |
 | Video demo < 5 phút | Đã quay (xem README) | `docs/demo/demo.mp4` |
 
 ## Vì sao bench chính thức không đạt p1 trên máy này

@@ -19,8 +19,8 @@
 - Tạm dừng (Esc/P).
 - Web: chuỗi ba Đêm, tổng điểm chiến dịch, HUD mới, mặt đất theo từng Đêm.
 
-### Chưa làm trong Phase 2
-- Menu chính, màn giới thiệu Đêm, cài đặt âm lượng và độ nhạy chuột lưu giữa các lần mở, âm thanh, bảng màu chuẩn: chưa có. Xem `docs/notes/phase-2-eval.md`.
+### Đã làm sau đó (Phase 4)
+- (Đã làm ở Phase 4: menu, màn giới thiệu, cài đặt, âm thanh, âm lượng, độ nhạy chuột.)
 
 ## Phase 3 (Ticket-03 "Đèn cạn dầu", Contract v1.2)
 

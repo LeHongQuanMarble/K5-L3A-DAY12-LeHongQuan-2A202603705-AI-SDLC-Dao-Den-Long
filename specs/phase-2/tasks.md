@@ -9,4 +9,4 @@
 - [x] T7 Web: ba đêm, mặt đất theo bản đồ, HUD, tạm dừng, lướt, Gió Lạc, bùa (chưa kiểm trên trình duyệt)
 - [x] T8 Bằng chứng `npm run evidence` → `docs/proof/phase-2/`
 - [x] T9 Ghi chú: giả định, thay đổi test, CHANGELOG, đánh giá, README, AGENTS.md
-- [ ] T10 Commit và gắn tag `phase-2` sau khi `npm test` xanh và evidence chạy lại trên đúng commit
+- [x] T10 Commit và gắn tag `phase-2` sau khi `npm test` xanh và evidence chạy lại trên đúng commit

@@ -8,7 +8,7 @@
 
 ## Chưa đạt hoặc chưa kiểm chứng
 
-- **Menu chính, màn giới thiệu Đêm, cài đặt (âm lượng, độ nhạy chuột lưu giữa các lần mở), âm thanh (nhạc nền và hiệu ứng):** chưa làm. Đây là các mục của Ticket-02 phần 3 và DoD. Không có bằng chứng cho các mục này.
+- (Cập nhật: các mục menu, giới thiệu, cài đặt, âm thanh đã làm ở Phase 4; xem phase-4-eval.md.)
 - **Bảng màu chuẩn:** màu trong `web/main.js` lấy gần đúng từ bảng, chưa đối chiếu sai lệch 10% mỗi kênh.
 - **Trình duyệt:** không mở game trong Chrome trong phiên này, nên không kiểm được hiển thị ba Đêm, HUD mới, phím Shift/Esc, chuỗi Đêm 1→2→3.
 - **FPS ≥ 30 ở 1280×720:** chưa đo.

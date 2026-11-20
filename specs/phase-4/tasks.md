@@ -8,5 +8,5 @@
 - [x] Contract v1.3 (bench_cmd, soak_cmd, run_cmd = `node bin/game.js`)
 - [x] Kiểm trên trình duyệt thật: menu, đổi phím, nhập tên, chữ lớn, tải lại (E2E 17/17)
 - [x] Video demo < 5 phút (`docs/demo/demo.mp4`, ~86 s)
-- [ ] GitHub Release v1.0.0 kèm gói chạy được (gói `release/dao-den-long-v1.0.0.zip`; đẩy lên GitHub ở bước cuối)
+- [x] GitHub Release v1.0.0 đã phát hành với gói chạy được, video, bench.json, soak.json (https://github.com/LeHongQuanMarble/K5-L3A-DAY12-LeHongQuan-2A202603705-AI-SDLC-Dao-Den-Long/releases/tag/v1.0.0)
 - [x] README, CHANGELOG, CREDITS, retro, đánh giá
