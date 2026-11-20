@@ -1,15 +1,15 @@
-# Nguồn và giấy phép
+# Nguồn, asset và công cụ
 
 ## Thư viện
-
-- **three.js r160** (`three@0.160.0`), giấy phép MIT, tải từ `cdn.jsdelivr.net` trong `web/index.html`.
-- **Node.js built-in** (`node:test`, `node:http`, `node:child_process`): không có phụ thuộc bên ngoài.
+- **three.js r160** (MIT), tải từ CDN `cdn.jsdelivr.net/npm/three@0.160.0` khi chạy trình duyệt. Không có bản sao trong repo.
 
 ## Asset
-
-- Không dùng asset bên ngoài. Mọi hình khối (Mây, Đèn Lồng, Bóng Mực, đom đóm, đảo) là hình học của three.js, tự dựng trong `web/main.js`.
-- Nhân vật, bối cảnh và tên gọi do lab cung cấp.
+- Không dùng asset ngoài. Mọi hình khối (mặt đất, đèn, Bóng Mực, Mây, đom đóm, bùa) tạo bằng hình học của three.js trong `web/main.js`.
+- Không có âm thanh trong bản này.
+- Phông chữ: phông hệ thống (`system-ui`), không tải.
 
 ## Công cụ AI
+- Mã nguồn, test, tài liệu và bằng chứng do Claude Code (Claude Haiku 5.5) viết theo yêu cầu và kiểm chứng bằng test; xem `docs/notes/ai-log.md`.
 
-- Mã nguồn và tài liệu được viết với sự hỗ trợ của Claude (Claude Code). Chi tiết ở `docs/notes/ai-log.md`.
+## Nhân vật và bối cảnh
+- Mây, Bóng Mực, Gió Lạc, Đảo Bến/Cau/Chuông và các đèn là bản gốc của lab.

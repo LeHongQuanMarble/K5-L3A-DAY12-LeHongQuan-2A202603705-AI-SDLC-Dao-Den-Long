@@ -1,0 +1,13 @@
+{
+  "contract_version": "1.3",
+  "avg_fps": 1.9,
+  "p1_low_fps": 0.1,
+  "frame_ms_p95": 8101.2,
+  "frames": 53,
+  "load_ms": 3168,
+  "peak_mem_mb": 1501,
+  "vsync_off": true,
+  "renderer": "three.js r160 (WebGL): ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "os": "Linux 7.0.0-38-generic x64; 11th Gen Intel(R) Core(TM) i5-1135G7 @ 2.40GHz x8; RAM 15684 MB",
+  "targets_met": false
+}

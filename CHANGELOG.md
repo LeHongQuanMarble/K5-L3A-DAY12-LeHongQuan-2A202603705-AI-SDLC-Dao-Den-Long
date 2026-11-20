@@ -38,3 +38,18 @@
 - Nhiên liệu đèn, hút dầu, châm dầu, thắp lại (5 đom đóm).
 - Web: thanh dầu/nhấp nháy dưới 30, đèn tắt xẹp và có vết rách, bảng màu dễ phân biệt (lưu cục bộ).
 - ADR 0001 (`docs/adr/0001-fuel-and-win-rule.md`).
+
+## Phase 4 (Ticket-04 "Bình minh: phát hành v1.0.0", Contract v1.3)
+
+### Thay đổi phá vỡ tương thích
+- `game.contract.json`: `contract_version` 1.3; thêm `bench_cmd`, `soak_cmd`; `run_cmd` là `node bin/game.js`.
+- `npm start` chạy `bin/game.js` (máy chủ tĩnh). `scripts/serve.js` xuất `startServer` để dùng lại.
+- Sim có chế độ `createBenchGame` (không ảnh hưởng CLI headless; đầu ra headless không đổi).
+
+### Thêm mới
+- Bảng xếp hạng cục bộ: top 10, tên 3–12 ký tự, lưu trên web (localStorage) và xuất JSON; `node bin/game.js --export-leaderboard out.json`.
+- Soak test headless 10 Đêm: `node --expose-gc bin/soak.js --seed 7 --nights 10 --out soak.json`.
+- Benchmark: `node --expose-gc bin/bench.js --seed 42 --duration 30 --out bench.json` (Chrome headless qua DevTools).
+- Menu chính; màn hình Cài đặt: đổi phím (có báo trùng), khôi phục mặc định, giảm chuyển động, chữ lớn ×1.25, bảng màu dễ phân biệt.
+- Chỉ báo Bóng Mực ngoài màn hình (mũi tên ở mép), 10 s cuối nhấp nháy đỏ, cảnh báo gió, đèn sắp tắt nhấp nháy.
+- Nhập tên khi kết thúc chiến dịch (thắng Đêm 3 hoặc thua).

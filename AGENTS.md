@@ -8,6 +8,8 @@ Dự án: **Đảo Đèn Lồng**, game 3D trên three.js với lõi mô phỏng
 - `npm run check`: kiểm tra cú pháp các file JS.
 - `npm run evidence`: chạy các kịch bản headless bằng CLI thật và ghi `docs/proof/phase-2/`. **Không sửa tay** các file trong `docs/proof/`.
 - `npm run contract`: sinh lại `game.contract.json` từ `src/tuning.js` và `SCORE`. Không sửa tay file này.
+- `npm run bench`: đo hiệu năng trong Chrome headless (cần `google-chrome`). `npm run soak`: soak 10 Đêm headless.
+- `node bin/game.js --export-leaderboard out.json`: xuất bảng xếp hạng đã lưu.
 - `npm start`: máy chủ tĩnh tại http://127.0.0.1:8080 (tự chuyển về `/web/`).
 - `node bin/headless.js --seed <n> --night 1|2|3 --ticks <n> --out <file>`: chạy headless.
 
@@ -27,7 +29,7 @@ Dự án: **Đảo Đèn Lồng**, game 3D trên three.js với lõi mô phỏng
 
 Phase 2 (Ticket-02, Contract v1.1): ba Đêm, lướt, bục nhảy, rơi, Gió Lạc, Bùa Gió, gió Đêm 3, tạm dừng. Spec: `specs/phase-2/spec.md`. Giả định: `docs/notes/phase-2-assumptions.md`. Breaking changes: `CHANGELOG.md`.
 
-Phase 3 và 4: chỉ làm khi ticket được phát hành. Không đoán trước.
+Phase 4 (Ticket-04, v1.0.0): spec `specs/phase-4/`, giả định `docs/notes/phase-4-assumptions.md`. Phase 4 là phase cuối.
 
 ## Quy tắc Phase 2+
 

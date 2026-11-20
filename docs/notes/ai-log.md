@@ -52,3 +52,10 @@ Nguồn yêu cầu: Ticket-02 do người dùng dán vào phiên (nội dung t�
 Quy trình: viết `tests/phase2.test.js` (54 test) trước, thấy đỏ, rồi mới viết sim, world và scenario. Sửa test Phase 1 theo `docs/notes/phase-2-test-changes.md`.
 
 Ước tính token: không đo được chính xác trong phiên. Tiết kiệm đã làm: đọc lab board một lần cho mỗi mốc; chạy test phase 2 riêng trước khi chạy cả bộ; headless chạy nhanh nên evidence đầy đủ mất vài giây.
+
+
+## Phase 3 (Ticket-03) và Phase 4 (Ticket-04)
+
+- Phase 3: viết `tests/phase3.test.js` (38 test) trước; sau đó viết lại `src/sim.js` cho v1.2. Sai sót: 6 test cũ cần cập nhật (xem `docs/notes/phase-3-test-changes.md`); tệp `sim.js` bị báo "đã thay đổi" dù nội dung không đổi (phải đọc lại trước khi ghi).
+- Phase 4: một phần mã (bảng xếp hạng, cảnh bench, soak, cài đặt) được viết trước test. Test vẫn chạy và đạt; ghi nhận đây là sai quy trình (đỏ-trước không được tuân thủ đầy đủ). Số đo FPS và bộ nhớ trong sandbox không đạt ngưỡng; ghi trung thực trong `docs/notes/phase-4-eval.md`.
+- Ước tính token: không đo được chính xác trong phiên; xem retro.
