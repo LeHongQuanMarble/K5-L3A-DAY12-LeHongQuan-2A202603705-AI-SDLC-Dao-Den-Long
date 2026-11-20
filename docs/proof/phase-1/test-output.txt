@@ -1,0 +1,51 @@
+
+> dao-den-long@1.0.0 test
+> node --test tests/*.test.js
+
+✔ contract declares the fixed fields of Test Contract v1.0 (1.571821ms)
+✔ contract tuning matches src/tuning.js exactly (0.777203ms)
+✔ contract score matches src/tuning.js exactly (0.170485ms)
+✔ runs N ticks, writes JSONL that starts with a snapshot and ends with end (41.544529ms)
+✔ snapshots appear every --snapshot-every ticks, default 10 (54.543718ms)
+✔ same seed, scenario and inputs give byte-identical output (62.812818ms)
+✔ events use the Contract names and tick = step index + 1 (26.981373ms)
+✔ the shade-hit scenario ends the night with no_flames (27.321938ms)
+✔ coordinates are rounded to 3 decimals (24.902884ms)
+✔ malformed inputs file exits with code 2 (27.94224ms)
+✔ invalid JSON in a scenario exits with code 2 (26.923417ms)
+✔ scenario with an unknown lantern id exits with code 2 (25.89006ms)
+✔ missing required arguments exit non-zero with a message on stderr (27.401371ms)
+✔ --night other than 1 is rejected (25.315794ms)
+✔ standing still with no shades until dawn ends the night as lost (dawn) (56.051922ms)
+✔ initial state follows PRD-0 (2.072876ms)
+✔ move [0,1] with yaw 0 walks +Z at player_speed (0.831943ms)
+✔ diagonal input is normalized: speed stays player_speed (0.320642ms)
+✔ camera yaw rotates movement: yaw 90 turns forward into +X (0.996148ms)
+✔ player stays on the island (no fall, clamped to island_radius) (0.969286ms)
+✔ jump leaves the ground and lands at Y=0 (0.462725ms)
+✔ mote within pickup_radius is picked up and emits mote_picked (0.397121ms)
+✔ mote outside pickup_radius is left alone (0.183958ms)
+✔ carry_capacity limits pickups (0.246207ms)
+✔ interact deposits up to lantern_cost, lights the lantern and scores (0.469976ms)
+✔ interact is edge-triggered: holding the button deposits once (0.290124ms)
+✔ interact far from lanterns does nothing (0.167091ms)
+✔ lighting all 5 lanterns wins with all_lit and time/flame bonus (0.350787ms)
+✔ time running out ends the night as lost with reason dawn (0.253555ms)
+✔ shade touching the player costs 1 flame, drops carried fireflies and grants invulnerability (0.303644ms)
+✔ losing the last flame ends the night with reason no_flames (0.141956ms)
+✔ pulse costs pulse_cost, stuns shades in range, pushes them and scores per_stun (0.281903ms)
+✔ stunned shade does not move or hit, and wakes after pulse_stun_s (0.650587ms)
+✔ pulse respects cooldown and needs enough light (0.161973ms)
+✔ lit lantern keeps shades out of safe_radius (2.045232ms)
+✔ shades chase the player (0.363477ms)
+✔ same seed and same inputs give identical snapshots (16.548312ms)
+✔ applyInputFrame changes only the fields a frame contains (0.176404ms)
+✔ coordinates in snapshots have at most 3 decimals (0.360924ms)
+ℹ tests 39
+ℹ suites 0
+ℹ pass 39
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 488.894087
