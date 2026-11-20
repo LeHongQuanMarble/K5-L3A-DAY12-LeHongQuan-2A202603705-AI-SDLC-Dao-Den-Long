@@ -8,7 +8,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const file = path.join(ROOT, 'game.contract.json');
 const old = JSON.parse(readFileSync(file, 'utf8'));
 const contract = {
-  contract_version: '1.1',
+  contract_version: '1.2',
   team: old.team,
   build_cmd: old.build_cmd,
   run_cmd: old.run_cmd,

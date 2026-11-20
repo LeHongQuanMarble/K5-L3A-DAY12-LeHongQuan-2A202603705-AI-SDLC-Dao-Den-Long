@@ -5,8 +5,8 @@ import { TUNING, SCORE } from '../src/tuning.js';
 
 const contract = JSON.parse(readFileSync(new URL('../game.contract.json', import.meta.url), 'utf8'));
 
-test('contract declares the fixed fields of Test Contract v1.1', () => {
-  assert.equal(contract.contract_version, '1.1');
+test('contract declares the fixed fields of Test Contract v1.2', () => {
+  assert.equal(contract.contract_version, '1.2');
   assert.match(contract.team, /^[^ ]+$/);
   for (const k of ['build_cmd', 'run_cmd', 'headless_cmd']) assert.equal(typeof contract[k], 'string');
 });

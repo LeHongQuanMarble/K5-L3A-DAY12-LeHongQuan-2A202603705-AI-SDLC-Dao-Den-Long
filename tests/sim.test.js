@@ -9,6 +9,7 @@ const quiet = (extra = {}) =>
   normalizeScenario({ random_motes: false, random_shades: false, ...extra });
 const run = (g, n) => { const ev = []; for (let i = 0; i < n; i++) { step(g); ev.push(...g.events); } return ev; };
 const names = (ev) => ev.map((e) => e.name);
+const find = (ev, name) => ev.find((e) => e.name === name);
 const acts = (ev) => ev.filter((e) => e.name !== 'night_start');
 const dist = (a, b) => Math.hypot(a[0] - b[0], a[2] - b[2]);
 
@@ -128,17 +129,15 @@ test('interact far from lanterns does nothing', () => {
   assert.equal(g.player.carried, 2);
 });
 
-test('lighting all 5 lanterns wins with all_lit and time/flame bonus', () => {
+test('lighting all 5 lanterns no longer wins early (Ticket-03; see phase3 AC-P3-08)', () => {
+  // Lý do: Contract v1.2 bỏ thắng sớm. Test cũ kiểm tra all_lit và điểm thưởng cũ.
   const lanterns = [1, 2, 3, 4].map((i) => ({ id: `L${i}`, lit: true }));
   lanterns.push({ id: 'L5', pos: [6, 0, 0] });
   const g = createGame({ seed: 1, scenario: quiet({ lanterns, player: { pos: [5.5, 0, 0], carried: T.carry_capacity } }) });
   g.input.interact = true;
   const ev = acts(run(g, 1));
-  assert.equal(g.state, 'won');
-  assert.deepEqual(ev.find((e) => e.name === 'game_over').data, { result: 'won', reason: 'all_lit' });
-  // v1.1: thưởng 2 điểm mỗi giây còn lại và 50 điểm mỗi Ngọn Lửa còn lại.
-  const bonus = Math.floor(T.night1_duration_s - 1 / 60) * SCORE.per_second_left + T.flames * SCORE.per_flame_left;
-  assert.equal(g.score, T.lantern_cost * SCORE.per_mote + SCORE.per_lantern + bonus);
+  assert.equal(g.state, 'playing');
+  assert.equal(find(ev, 'game_over'), undefined);
 });
 
 test('time running out ends the night as lost with reason dawn', () => {

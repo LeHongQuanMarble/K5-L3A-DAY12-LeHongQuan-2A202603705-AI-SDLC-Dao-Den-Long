@@ -21,3 +21,20 @@
 
 ### Chưa làm trong Phase 2
 - Menu chính, màn giới thiệu Đêm, cài đặt âm lượng và độ nhạy chuột lưu giữa các lần mở, âm thanh, bảng màu chuẩn: chưa có. Xem `docs/notes/phase-2-eval.md`.
+
+## Phase 3 (Ticket-03 "Đèn cạn dầu", Contract v1.2)
+
+### Thay đổi phá vỡ tương thích (breaking)
+- Thắp đủ đèn không kết thúc Đêm nữa (bỏ thắng sớm). Thắng khi hết giờ, còn Ngọn Lửa và đủ đèn sáng: `game_over.reason = dawn_survived`. `all_lit` không còn dùng.
+- Thời lượng Đêm: 240 / 270 / 300 s (trước 300 / 330 / 360).
+- Điểm: `per_mote` 10 → 5 (nạp và châm); bỏ `per_second_left`; thêm `per_relight` 40, `per_drain_stun` 10, `per_lit_end` 50, `per_fuel_end` 1; thưởng thắng đổi thành đèn sáng và Ngọn Lửa.
+- Snapshot: mỗi đèn có `fuel`, `ever_lit`, `relit_count`; `player.capacity`; trạng thái Bóng Mực thêm `drain`.
+- Scenario: đèn có `fuel`, `ever_lit`; `player.successful_lights`; Bóng Mực có `target_lantern_id`, trạng thái `drain`.
+- Sự kiện mới: `refuel`, `lantern_out`, `fuel_drain`; `lantern_lit` thêm `relight`.
+- Bóng Mực hết choáng về `wander` (trước là `chase` khi Mây gần).
+- Sức chứa tăng theo số lần thắp thành công (10 → tối đa 20). Trước đây cố định 10.
+
+### Thêm mới
+- Nhiên liệu đèn, hút dầu, châm dầu, thắp lại (5 đom đóm).
+- Web: thanh dầu/nhấp nháy dưới 30, đèn tắt xẹp và có vết rách, bảng màu dễ phân biệt (lưu cục bộ).
+- ADR 0001 (`docs/adr/0001-fuel-and-win-rule.md`).

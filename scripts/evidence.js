@@ -7,23 +7,21 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = path.join(ROOT, 'docs', 'proof', 'phase-2');
+const OUT = path.join(ROOT, 'docs', 'proof', 'phase-3');
 const RUNS = path.join(OUT, 'runs');
 mkdirSync(RUNS, { recursive: true });
 
 // Mỗi dòng là một lần chạy CLI thật. night: 1-3; scenario/inputs là đường dẫn tương đối tới ROOT.
 const RUNS_SPEC = [
-  { name: 'P2-R1-night1-full', seed: 1, night: 1, ticks: 18000, every: 3600, req: 'AC-P2-13 (Đêm 1 đủ 300 s)' },
-  { name: 'P2-R2-night2-full', seed: 7, night: 2, ticks: 21600, every: 3600, req: 'AC-P2-13, AC-P2-14, AC-P2-17, AC-P2-18' },
-  { name: 'P2-R3-night3-full', seed: 7, night: 3, ticks: 21600, every: 3600, req: 'AC-P2-13, AC-P2-15, AC-P2-16' },
-  { name: 'P2-R4-jump-pad-night2', seed: 1, night: 2, scenario: 'scenarios/p2-jump-pad-night2.json', inputs: 'inputs/p2-jump-pad-idle.json', ticks: 240, every: 60, req: 'AC-P2-14 (bục nhảy)' },
-  { name: 'P2-R5-drifter-steal-night2', seed: 1, night: 2, scenario: 'scenarios/p2-drifter-steal.json', ticks: 300, every: 60, req: 'AC-P2-17 (Gió Lạc)' },
-  { name: 'P2-R6-charm-night2', seed: 1, night: 2, scenario: 'scenarios/p2-charm-pickup.json', ticks: 200, every: 50, req: 'AC-P2-18 (Bùa Gió)' },
-  { name: 'P2-R7-wind-night3', seed: 2, night: 3, scenario: 'scenarios/p2-wind-night3.json', ticks: 2400, every: 300, req: 'AC-P2-16 (gió Đêm 3)' },
-  { name: 'P2-R8-pause-night1', seed: 1, night: 1, scenario: 'scenarios/quiet-dawn.json', inputs: 'inputs/p2-pause.json', ticks: 260, every: 60, req: 'AC-P2-19 (tạm dừng)' },
-  { name: 'P2-R9-fall-night1', seed: 1, night: 1, scenario: 'scenarios/p2-fall-night1.json', inputs: 'inputs/p2-walk-off-night1.json', ticks: 240, every: 60, req: 'AC-P2-12 (rơi khỏi đảo)' },
-  { name: 'P2-R10-dash-night1', seed: 1, night: 1, scenario: 'scenarios/quiet-dawn.json', inputs: 'inputs/p2-dash-and-walk.json', ticks: 180, every: 60, req: 'AC-P2-04 (lướt)' },
-  { name: 'P1-R-random-night1-seed42', seed: 42, night: 1, ticks: 3600, every: 600, req: 'AC-11 (tất định, ngẫu nhiên)' },
+  { name: 'P3-R1-night1-full', seed: 1, night: 1, ticks: 14400, every: 3600, req: 'AC-P3-11, AC-P3-08 (không thắng sớm)' },
+  { name: 'P3-R2-night2-full', seed: 7, night: 2, ticks: 16200, every: 3600, req: 'AC-P3-11' },
+  { name: 'P3-R3-night3-full', seed: 7, night: 3, ticks: 18000, every: 3600, req: 'AC-P3-11, AC-P3-16' },
+  { name: 'P3-R4-drain-night1', seed: 1, night: 1, scenario: 'scenarios/p3-drain-night1.json', ticks: 240, every: 60, req: 'AC-P3-13, AC-P3-14 (hút dầu)' },
+  { name: 'P3-R5-refuel-night1', seed: 1, night: 1, scenario: 'scenarios/p3-refuel-night1.json', inputs: 'inputs/p3-interact-tick0.json', ticks: 120, every: 60, req: 'AC-P3-03 (châm dầu)' },
+  { name: 'P3-R6-relight-night1', seed: 1, night: 1, scenario: 'scenarios/p3-relight-night1.json', inputs: 'inputs/p3-interact-tick0.json', ticks: 120, every: 60, req: 'AC-P3-06 (thắp lại 5 đom đóm)' },
+  { name: 'P3-R7-pause-night1', seed: 1, night: 1, scenario: 'scenarios/quiet-dawn.json', inputs: 'inputs/p2-pause.json', ticks: 260, every: 60, req: 'AC-P2-19 (tạm dừng, còn hiệu lực)' },
+  { name: 'P3-R8-wind-night3', seed: 2, night: 3, scenario: 'scenarios/p2-wind-night3.json', ticks: 2400, every: 300, req: 'AC-P2-16 (gió, còn hiệu lực)' },
+  { name: 'P3-R9-determinism-seed42', seed: 42, night: 1, ticks: 3600, every: 600, req: 'AC-11 (tất định)' },
 ];
 
 const sha = (buf) => createHash('sha256').update(buf).digest('hex');
@@ -76,9 +74,9 @@ writeFileSync(badInputs, '{"frames":[{"tick":4},{"tick":2}]}\n');
 const bad2 = cli(['--seed', '1', '--ticks', '5', '--out', path.join(RUNS, 'bad.jsonl'), '--inputs', badInputs]);
 
 const md = [];
-md.push('# Bằng chứng Phase 2 (sinh tự động bởi `npm run evidence`)');
+md.push('# Bằng chứng Phase 3 (sinh tự động bởi `npm run evidence`)');
 md.push('');
-md.push('Mỗi dòng: một lần chạy CLI headless thật, chạy hai lần và so sha256. Cột `deterministic` = `yes` nghĩa là hai lần cho byte giống nhau. Bằng chứng Phase 1 cũ nằm ở `docs/proof/phase-1/` (tag `phase-1`).');
+md.push('Mỗi dòng: một lần chạy CLI headless thật, chạy hai lần và so sha256. Cột `deterministic` = `yes` nghĩa là hai lần cho byte giống nhau. Bằng chứng Phase 1 và Phase 2 nằm ở `docs/proof/phase-1/` và `docs/proof/phase-2/` (theo tag).');
 md.push('');
 md.push('| Run | Yêu cầu | Lệnh | Exit | State | Ticks | Điểm | Lý do kết thúc | Deterministic | sha256 (16 ký tự đầu) | Sự kiện |');
 md.push('|---|---|---|---|---|---|---|---|---|---|---|');

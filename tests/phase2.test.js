@@ -31,16 +31,17 @@ test('AC-P2-01 tuning matches Ticket-02 section 1 numbers', () => {
   assert.equal(T.safe_radius, 6.0);
   assert.equal(T.shade_speed, 4.0);
   assert.equal(T.shade_speed_night3, 4.5);
-  assert.equal(T.night1_duration_s, 300);
-  assert.equal(T.night2_duration_s, 330);
-  assert.equal(T.night3_duration_s, 360);
+  // v1.2 (Ticket-03) thay thời lượng: 240/270/300. Xem AC-P3-11.
+  assert.equal(T.night1_duration_s, 240);
+  assert.equal(T.night2_duration_s, 270);
+  assert.equal(T.night3_duration_s, 300);
   assert.equal(T.mote_start_count, 20);
   assert.equal(T.mote_max, 30);
-  assert.equal(SCORE.per_mote, 10);
+  assert.equal(SCORE.per_mote, 5); // v1.2, trước đây 10
   assert.equal(SCORE.per_lantern, 100);
   assert.equal(SCORE.per_stun, 5);
-  assert.equal(SCORE.per_second_left, 2);
   assert.equal(SCORE.per_flame_left, 50);
+  // v1.2: per_mote 5; thưởng thời gian đã bỏ (Ticket-03 mục 5). Xem AC-P3-01.
 });
 
 // AC-P2-02 Di chuyển: đạt tốc độ trong ≤ 0.1 s
@@ -163,16 +164,14 @@ test('AC-P2-06 lit lanterns are not valid targets for interact', () => {
 });
 
 // AC-P2-07 Thắp đèn lần đầu và thắng khi thắp đủ đèn (kể cả đúng tick hết giờ)
-test('AC-P2-07 all lanterns lit wins the night at once (all_lit)', () => {
+test('AC-P2-07 (thay bằng Ticket-03): đủ đèn sáng KHÔNG kết thúc Đêm nữa', () => {
+  // Lý do: Ticket-03 mục 3 "Không còn thắng sớm". Kiểm tra đầy đủ ở AC-P3-08.
   const lanterns = [1, 2, 3, 4].map((i) => ({ id: `L${i}`, lit: true }));
   lanterns.push({ id: 'L5', pos: [6, 0, 0] });
   const g = game(1, { lanterns, player: { pos: [5.5, 0, 0], carried: 10 } });
   g.input.interact = true;
-  const ev = run(g, 1);
-  assert.equal(g.state, 'won');
-  assert.deepEqual(find(ev, 'game_over').data, { result: 'won', reason: 'all_lit' });
-  const bonus = Math.floor(timeLeft(g)) * SCORE.per_second_left + T.flames * SCORE.per_flame_left;
-  assert.equal(g.score, T.lantern_cost * SCORE.per_mote + SCORE.per_lantern + bonus);
+  run(g, 1);
+  assert.equal(g.state, 'playing');
 });
 
 test('AC-P2-07 winning on the same tick as the timer runs out still wins', () => {
@@ -354,10 +353,11 @@ test('AC-P2-12 falling with the last flame loses at once (no respawn)', () => {
 });
 
 // AC-P2-13 Thời gian và kết thúc
-test('AC-P2-13 night durations are 300 / 330 / 360 s', () => {
-  assert.equal(createGame({ seed: 1, night: 1 }).timeBase, 300);
-  assert.equal(createGame({ seed: 1, night: 2 }).timeBase, 330);
-  assert.equal(createGame({ seed: 1, night: 3 }).timeBase, 360);
+test('AC-P2-13 (cập nhật v1.2): thời lượng Đêm 240 / 270 / 300 s', () => {
+  // Lý do: Ticket-03 mục 3 đổi thời lượng. Kiểm tra đầy đủ ở AC-P3-11.
+  assert.equal(createGame({ seed: 1, night: 1 }).timeBase, 240);
+  assert.equal(createGame({ seed: 1, night: 2 }).timeBase, 270);
+  assert.equal(createGame({ seed: 1, night: 3 }).timeBase, 300);
 });
 
 test('AC-P2-13 standing still until dawn loses (dawn)', () => {
@@ -368,13 +368,9 @@ test('AC-P2-13 standing still until dawn loses (dawn)', () => {
   assert.deepEqual(find(ev, 'game_over').data, { result: 'lost', reason: 'dawn' });
 });
 
-test('AC-P2-13 score at a win: floor(seconds left) * 2 + 50 * flames', () => {
-  const g = game(1, { lanterns: [{ id: 'L1', lit: true }, { id: 'L2', lit: true }, { id: 'L3', lit: true }, { id: 'L4', lit: true }, { id: 'L5', pos: [6, 0, 0] }], player: { pos: [5.5, 0, 0], carried: 10 } });
-  g.input.interact = true;
-  run(g, 1);
-  assert.equal(g.state, 'won');
-  // 10 đom đóm nạp (100) + 5 đèn thắp: 4 đèn sẵn sáng không tính điểm, chỉ L5 cho +100 và 100 điểm nạp
-  assert.equal(g.score, 10 * 10 + 100 + Math.floor(timeLeft(g)) * 2 + 3 * 50);
+test('AC-P2-13 (thay bằng Ticket-03): thưởng thời gian đã bỏ; thưởng thắng xem AC-P3-21', () => {
+  // Lý do: Ticket-03 mục 5 bỏ "thưởng thời gian" và đổi thưởng bình minh.
+  assert.equal(SCORE.per_second_left, undefined);
 });
 
 // AC-P2-14 Đêm 2: bục nhảy, cầu tre

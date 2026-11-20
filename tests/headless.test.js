@@ -108,7 +108,7 @@ test('standing still with no shades until dawn ends the night as lost (dawn)', (
   const r = cli(['--seed', '1', '--night', '1', '--scenario', scen, '--ticks', '20000', '--out', out]);
   assert.equal(r.status, 0, r.stderr);
   const ls = lines(out);
-  assert.equal(ls.at(-1).ticks, 300 * 60); // v1.1: Đêm 1 dài 300 s
+  assert.equal(ls.at(-1).ticks, 240 * 60); // v1.2: Đêm 1 dài 240 s (Ticket-03)
   assert.equal(ls.at(-1).state, 'lost');
   assert.deepEqual(ls.find((l) => l.type === 'event' && l.name === 'game_over').data, { result: 'lost', reason: 'dawn' });
 });

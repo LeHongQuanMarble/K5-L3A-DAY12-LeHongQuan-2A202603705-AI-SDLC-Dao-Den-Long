@@ -8,6 +8,17 @@ const BG = 0x07061a;
 const TURN_DEG_PER_S = 120;
 const CAM_DIST = 7.5;
 const CAM_HEIGHT = 3.2;
+// Bảng màu dễ phân biệt (Ticket-03 mục 6). Lưu cục bộ; lỗi truy cập bộ nhớ thì dùng mặc định.
+function loadColorblind() {
+  try { return localStorage.getItem('dden.colorblind') === '1'; } catch { return false; }
+}
+function saveColorblind(on) {
+  try { localStorage.setItem('dden.colorblind', on ? '1' : '0'); } catch { /* không lưu được: bỏ qua */ }
+}
+let colorblind = loadColorblind();
+const SHADE_OUTLINE = () => (colorblind ? 0x00b3ff : 0x7a3cff);
+const WARN_TEXT = () => (colorblind ? '#ffffff' : '#ff5a5f');
+
 const NIGHT_NAMES = { 1: 'Đêm 1 · Đảo Bến', 2: 'Đêm 2 · Đảo Cau', 3: 'Đêm 3 · Đảo Chuông' };
 const REASON_TEXT = {
   dawn_survived: 'Trời sáng và đảo vẫn sáng đủ. Mây giữ được đảo.',
@@ -116,7 +127,11 @@ function buildLanterns(g) {
     group.add(post, bulb, light);
     group.position.set(l.pos[0], l.pos[1], l.pos[2]);
     scene.add(group);
-    return { id: l.id, bulb, light, group };
+    const torn = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.25), new THREE.MeshStandardMaterial({ color: 0xb8a77a, side: THREE.DoubleSide }));
+    torn.position.set(0.3, 1.9, 0.06);
+    torn.visible = false;
+    group.add(torn);
+    return { id: l.id, bulb, light, group, torn };
   });
 }
 
@@ -213,7 +228,9 @@ function onEvent(ev) {
   switch (ev.name) {
     case 'mote_picked': showMsg(`Nhặt được đom đóm (${ev.data.carried}/${T.carry_capacity})`, 1200); break;
     case 'deposit': showMsg(`Nạp ${ev.data.amount} đom đóm vào đèn ${ev.data.lantern_id} (${ev.data.deposited}/${T.lantern_cost})`); break;
-    case 'lantern_lit': showMsg(`Đèn ${ev.data.lantern_id} đã sáng!`, 3000); break;
+    case 'lantern_lit': showMsg(ev.data.relight ? `Đèn ${ev.data.lantern_id} được thắp lại!` : `Đèn ${ev.data.lantern_id} đã sáng!`, 3000); break;
+    case 'refuel': showMsg(`Châm ${ev.data.amount} đom đóm: đèn ${ev.data.lantern_id} còn ${ev.data.fuel.toFixed(1)} dầu`, 2000); break;
+    case 'lantern_out': showMsg(`Đèn ${ev.data.lantern_id} đã tắt vì hết dầu!`, 3000); break;
     case 'pulse': spawnPulse(); showMsg(ev.data.stunned_ids.length ? `Tỏa sáng: choáng ${ev.data.stunned_ids.length} Bóng Mực` : 'Tỏa sáng: không có Bóng Mực trong tầm'); break;
     case 'player_hit': flash(); showMsg(ev.data.by === 'fall' ? `Mây rơi khỏi đảo! Còn ${ev.data.flames} ngọn lửa` : `Bóng Mực làm tắt một ngọn lửa! Còn ${ev.data.flames}`, 2500); break;
     case 'shade_spawned': showMsg('Một Bóng Mực mới xuất hiện trong sương', 2500); break;
@@ -308,23 +325,31 @@ function syncHud() {
   document.getElementById('score').textContent = snap.score;
   document.getElementById('total').textContent = campaignScore + snap.score;
   const wind = document.getElementById('wind');
-  wind.textContent = snap.wind.active ? 'Gió mạnh!' : snap.wind.warning ? 'Gió sắp tới' : '';
+  wind.textContent = snap.wind.active ? '⚠ Gió mạnh!' : snap.wind.warning ? '⚠ Gió sắp tới' : '';
+  wind.style.color = snap.wind.active || snap.wind.warning ? WARN_TEXT() : '';
   document.getElementById('dash-cd').textContent = snap.player.dash_cd_s > 0 ? snap.player.dash_cd_s.toFixed(1) : 'sẵn sàng';
   document.getElementById('pulse-cd').textContent = snap.player.pulse_cd_s > 0 ? snap.player.pulse_cd_s.toFixed(1) : 'sẵn sàng';
 }
 
+let snapshotLanterns = [];
 function syncScene(now) {
   const p = game.player;
+  snapshotLanterns = snapshot(game).lanterns;
   player.position.set(p.pos[0], p.pos[1], p.pos[2]);
   player.scale.setScalar(1 + (p.grounded ? 0 : 0.05));
   player.visible = p.respawn === 0;
 
   for (const v of lanternViews) {
-    const l = game.lanterns.find((x) => x.id === v.id);
+    const l = snapshotLanterns.find((x) => x.id === v.id);
+    // Đèn tắt: xẹp 20% và giấy có vết rách (không cần màu để phân biệt). Đèn sắp hết dầu (<30) nhấp nháy 1 Hz.
+    v.group.scale.y = l.lit ? 1 : 0.8;
+    v.torn.visible = !l.lit;
+    const low = l.lit && l.fuel < 30;
+    const blink = low ? ((now / 500) % 2 < 1 ? 1 : 0.15) : 1;
     v.bulb.material.emissive.setHex(l.lit ? 0xffa640 : 0x000000);
-    v.bulb.material.emissiveIntensity = l.lit ? 1.8 + 0.2 * Math.sin(now / 300) : 0;
+    v.bulb.material.emissiveIntensity = l.lit ? (1.8 + 0.2 * Math.sin(now / 300)) * blink : 0;
     v.bulb.material.color.setHex(l.lit ? 0xffd38a : 0x3a2a1a);
-    v.light.intensity = l.lit ? 6 : 0;
+    v.light.intensity = l.lit ? 6 * blink : 0;
   }
 
   // đom đóm: tái sử dụng mesh
@@ -357,7 +382,7 @@ function syncScene(now) {
     v.core.material.emissive.setHex(stunned ? 0x66c7ff : 0x2a0d4a);
     v.core.material.emissiveIntensity = stunned ? 1.2 : 0.6;
     v.core.scale.setScalar(stunned ? 0.9 + 0.1 * Math.sin(now / 80) : 1);
-    v.eyeMat.color.setHex(stunned ? 0xffffff : 0x00b3ff);
+    v.eyeMat.color.setHex(stunned ? 0xffffff : SHADE_OUTLINE());
   }
 
   // Gió Lạc
@@ -451,6 +476,9 @@ window.addEventListener('keyup', (e) => held.delete(e.code));
 window.addEventListener('blur', () => held.clear());
 document.getElementById('replay').onclick = () => startCampaign(Math.floor(Math.random() * 1e9)); // onGameOver sẽ thay hành động này
 document.getElementById('resume').addEventListener('click', () => { queued.pause = true; });
+const cbBox = document.getElementById('colorblind');
+cbBox.checked = colorblind;
+cbBox.addEventListener('change', () => { colorblind = cbBox.checked; saveColorblind(colorblind); });
 document.getElementById('restart-night').addEventListener('click', () => startNight(night, Math.floor(Math.random() * 1e9)));
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;

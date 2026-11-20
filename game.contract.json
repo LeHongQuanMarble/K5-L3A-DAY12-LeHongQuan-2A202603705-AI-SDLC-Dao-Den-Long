@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.1",
+  "contract_version": "1.2",
   "team": "2A202603705-le-hong-quan",
   "build_cmd": "npm run check",
   "run_cmd": "npm start",
@@ -55,9 +55,17 @@
     "drop_max_r": 2.5,
     "fall_floor_y": -10,
     "fall_wait_s": 1,
-    "night1_duration_s": 300,
-    "night2_duration_s": 330,
-    "night3_duration_s": 360,
+    "night1_duration_s": 240,
+    "night2_duration_s": 270,
+    "night3_duration_s": 300,
+    "fuel_max": 100,
+    "fuel_decay_per_s": 1,
+    "fuel_per_mote": 10,
+    "relight_cost": 5,
+    "win_ratio": 0.6,
+    "drain_per_s": 5,
+    "low_fuel_threshold": 30,
+    "capacity_max": 20,
     "pad_radius": 1,
     "pad_night2_up": 14,
     "pad_night2_speed": 24,
@@ -84,10 +92,13 @@
     "island_radius_night2": 28
   },
   "score": {
-    "per_mote": 10,
+    "per_mote": 5,
     "per_lantern": 100,
+    "per_relight": 40,
     "per_stun": 5,
-    "per_second_left": 2,
+    "per_drain_stun": 10,
+    "per_lit_end": 50,
+    "per_fuel_end": 1,
     "per_flame_left": 50
   }
 }

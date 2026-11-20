@@ -43,7 +43,7 @@ export function normalizeScenario(raw) {
       if (p.carried > T.carry_capacity) bad(`player.carried must be <= ${T.carry_capacity}`);
     }
     if (raw.player.flames !== undefined) p.flames = nonNegInt(raw.player.flames, 'player.flames');
-    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks', 'successful_lights']) {
       if (raw.player[k] !== undefined) p[k] = nonNegInt(raw.player[k], `player.${k}`);
     }
     out.player = p;
@@ -97,10 +97,14 @@ export function normalizeScenario(raw) {
       if (!isObj(s)) bad(`shades[${i}] must be an object`);
       const item = { pos: vec3(s.pos, `shades[${i}].pos`) };
       if (s.state !== undefined) {
-        if (!['spawning', 'wander', 'chase', 'recoil', 'stunned'].includes(s.state)) {
-          bad(`shades[${i}].state must be one of spawning, wander, chase, recoil, stunned`);
+        if (!['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain'].includes(s.state)) {
+          bad(`shades[${i}].state must be one of spawning, wander, chase, recoil, stunned, drain`);
         }
         item.state = s.state;
+      }
+      if (s.target_lantern_id !== undefined) {
+        if (!LANTERN_IDS.includes(s.target_lantern_id)) bad(`shades[${i}].target_lantern_id must be a lantern id L1..L7`);
+        item.target_lantern_id = s.target_lantern_id;
       }
       if (s.state_ticks_left !== undefined) item.state_ticks_left = nonNegInt(s.state_ticks_left, `shades[${i}].state_ticks_left`);
       if (s.id !== undefined) {
@@ -125,6 +129,14 @@ export function normalizeScenario(raw) {
         item.lit = l.lit;
       }
       if (l.deposited !== undefined) item.deposited = nonNegInt(l.deposited, `lanterns[${i}].deposited`);
+      if (l.fuel !== undefined) {
+        if (!isFiniteNum(l.fuel) || l.fuel < 0 || l.fuel > T.fuel_max) bad(`lanterns[${i}].fuel must be a number in [0, ${T.fuel_max}]`);
+        item.fuel = l.fuel;
+      }
+      if (l.ever_lit !== undefined) {
+        if (typeof l.ever_lit !== 'boolean') bad(`lanterns[${i}].ever_lit must be a boolean`);
+        item.ever_lit = l.ever_lit;
+      }
       return item;
     });
   }

@@ -60,10 +60,19 @@ export const TUNING = Object.freeze({
   drop_max_r: 2.5,
   fall_floor_y: -10.0,            // m
   fall_wait_s: 1.0,               // 60 tick chờ trước khi hồi sinh
-  // Thời gian
-  night1_duration_s: 300,
-  night2_duration_s: 330,
-  night3_duration_s: 360,
+  // Thời gian (Contract v1.2, Ticket-03)
+  night1_duration_s: 240,
+  night2_duration_s: 270,
+  night3_duration_s: 300,
+  // Nhiên liệu đèn (Ticket-03)
+  fuel_max: 100,
+  fuel_decay_per_s: 1.0,        // đèn đang sáng hao 1 fuel/giây
+  fuel_per_mote: 10,            // mỗi đom đóm châm thêm 10 fuel
+  relight_cost: 5,              // đèn đã từng sáng chỉ cần 5 đom đóm để thắp lại
+  win_ratio: 0.6,               // thắng khi hết giờ: số đèn sáng >= ceil(win_ratio × tổng đèn)
+  drain_per_s: 5,               // Bóng Mực đang hút: 5 fuel/giây
+  low_fuel_threshold: 30,       // dưới mức này đèn mất vùng an toàn và thu hút Bóng Mực
+  capacity_max: 20,             // sức chứa = carry_capacity + 2 × lần thắp thành công, tối đa 20
   // Bục nhảy
   pad_radius: 1.0,
   pad_night2_up: 14.0,            // m/s
@@ -96,9 +105,12 @@ export const TUNING = Object.freeze({
 
 // Điểm số theo Test Contract (khóa `score`).
 export const SCORE = Object.freeze({
-  per_mote: 10,
-  per_lantern: 100,
-  per_stun: 5,
-  per_second_left: 2,
-  per_flame_left: 50,
+  per_mote: 5,            // mỗi đom đóm nạp hoặc châm dầu (Ticket-03)
+  per_lantern: 100,       // thắp lần đầu
+  per_relight: 40,        // thắp lại
+  per_stun: 5,            // mỗi Bóng Mực trúng Tỏa Sáng
+  per_drain_stun: 10,     // cộng thêm nếu Bóng Mực đang hút dầu (tổng 15)
+  per_lit_end: 50,        // lúc bình minh: mỗi đèn đang sáng
+  per_fuel_end: 1,        // lúc bình minh: mỗi đơn vị floor(fuel)
+  per_flame_left: 50,     // lúc bình minh: mỗi Ngọn Lửa còn lại
 });
