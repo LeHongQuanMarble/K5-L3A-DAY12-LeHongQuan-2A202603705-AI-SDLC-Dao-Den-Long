@@ -7,17 +7,23 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT = path.join(ROOT, 'docs', 'proof', 'phase-1');
+const OUT = path.join(ROOT, 'docs', 'proof', 'phase-2');
 const RUNS = path.join(OUT, 'runs');
 mkdirSync(RUNS, { recursive: true });
 
+// Mỗi dòng là một lần chạy CLI thật. night: 1-3; scenario/inputs là đường dẫn tương đối tới ROOT.
 const RUNS_SPEC = [
-  { name: 'R1-shade-hit', seed: 1, scenario: 'scenarios/shade-hit.json', ticks: 1000, every: 60, req: 'AC-6, AC-8' },
-  { name: 'R2-win-by-deposit', seed: 1, scenario: 'scenarios/win-by-deposit.json', inputs: 'inputs/deposit-win.json', ticks: 600, every: 60, req: 'AC-4, AC-8' },
-  { name: 'R3-pulse-stun', seed: 1, scenario: 'scenarios/pulse-stun.json', inputs: 'inputs/pulse-once.json', ticks: 300, every: 60, req: 'AC-5' },
-  { name: 'R4-walk-and-jump', seed: 7, inputs: 'inputs/walk-and-jump.json', ticks: 600, every: 60, req: 'AC-1, AC-2, AC-3' },
-  { name: 'R5-dawn', seed: 42, scenario: 'scenarios/quiet-dawn.json', ticks: 20000, every: 3600, req: 'AC-8' },
-  { name: 'R6-random-seed-42', seed: 42, ticks: 3600, every: 600, req: 'AC-11' },
+  { name: 'P2-R1-night1-full', seed: 1, night: 1, ticks: 18000, every: 3600, req: 'AC-P2-13 (Đêm 1 đủ 300 s)' },
+  { name: 'P2-R2-night2-full', seed: 7, night: 2, ticks: 21600, every: 3600, req: 'AC-P2-13, AC-P2-14, AC-P2-17, AC-P2-18' },
+  { name: 'P2-R3-night3-full', seed: 7, night: 3, ticks: 21600, every: 3600, req: 'AC-P2-13, AC-P2-15, AC-P2-16' },
+  { name: 'P2-R4-jump-pad-night2', seed: 1, night: 2, scenario: 'scenarios/p2-jump-pad-night2.json', inputs: 'inputs/p2-jump-pad-idle.json', ticks: 240, every: 60, req: 'AC-P2-14 (bục nhảy)' },
+  { name: 'P2-R5-drifter-steal-night2', seed: 1, night: 2, scenario: 'scenarios/p2-drifter-steal.json', ticks: 300, every: 60, req: 'AC-P2-17 (Gió Lạc)' },
+  { name: 'P2-R6-charm-night2', seed: 1, night: 2, scenario: 'scenarios/p2-charm-pickup.json', ticks: 200, every: 50, req: 'AC-P2-18 (Bùa Gió)' },
+  { name: 'P2-R7-wind-night3', seed: 2, night: 3, scenario: 'scenarios/p2-wind-night3.json', ticks: 2400, every: 300, req: 'AC-P2-16 (gió Đêm 3)' },
+  { name: 'P2-R8-pause-night1', seed: 1, night: 1, scenario: 'scenarios/quiet-dawn.json', inputs: 'inputs/p2-pause.json', ticks: 260, every: 60, req: 'AC-P2-19 (tạm dừng)' },
+  { name: 'P2-R9-fall-night1', seed: 1, night: 1, scenario: 'scenarios/p2-fall-night1.json', inputs: 'inputs/p2-walk-off-night1.json', ticks: 240, every: 60, req: 'AC-P2-12 (rơi khỏi đảo)' },
+  { name: 'P2-R10-dash-night1', seed: 1, night: 1, scenario: 'scenarios/quiet-dawn.json', inputs: 'inputs/p2-dash-and-walk.json', ticks: 180, every: 60, req: 'AC-P2-04 (lướt)' },
+  { name: 'P1-R-random-night1-seed42', seed: 42, night: 1, ticks: 3600, every: 600, req: 'AC-11 (tất định, ngẫu nhiên)' },
 ];
 
 const sha = (buf) => createHash('sha256').update(buf).digest('hex');
@@ -28,7 +34,7 @@ function cli(args) {
 
 const rows = [];
 for (const r of RUNS_SPEC) {
-  const args = ['--seed', String(r.seed), '--night', '1', '--ticks', String(r.ticks), '--snapshot-every', String(r.every)];
+  const args = ['--seed', String(r.seed), '--night', String(r.night), '--ticks', String(r.ticks), '--snapshot-every', String(r.every)];
   if (r.scenario) args.push('--scenario', path.join(ROOT, r.scenario));
   if (r.inputs) args.push('--inputs', path.join(ROOT, r.inputs));
   const a = path.join(RUNS, `${r.name}.jsonl`);
@@ -70,9 +76,9 @@ writeFileSync(badInputs, '{"frames":[{"tick":4},{"tick":2}]}\n');
 const bad2 = cli(['--seed', '1', '--ticks', '5', '--out', path.join(RUNS, 'bad.jsonl'), '--inputs', badInputs]);
 
 const md = [];
-md.push('# Bằng chứng Phase 1 (sinh tự động bởi `npm run evidence`)');
+md.push('# Bằng chứng Phase 2 (sinh tự động bởi `npm run evidence`)');
 md.push('');
-md.push('Mỗi dòng: một lần chạy CLI headless thật, chạy hai lần và so sha256. Cột `deterministic` = `yes` nghĩa là hai lần cho byte giống nhau.');
+md.push('Mỗi dòng: một lần chạy CLI headless thật, chạy hai lần và so sha256. Cột `deterministic` = `yes` nghĩa là hai lần cho byte giống nhau. Bằng chứng Phase 1 cũ nằm ở `docs/proof/phase-1/` (tag `phase-1`).');
 md.push('');
 md.push('| Run | Yêu cầu | Lệnh | Exit | State | Ticks | Điểm | Lý do kết thúc | Deterministic | sha256 (16 ký tự đầu) | Sự kiện |');
 md.push('|---|---|---|---|---|---|---|---|---|---|---|');

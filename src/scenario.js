@@ -22,13 +22,15 @@ function nonNegInt(v, where) {
   return v;
 }
 
-const LANTERN_IDS = Array.from({ length: T.lantern_count_night1 }, (_, i) => `L${i + 1}`);
+// Mã đèn tối đa trên mọi Đêm là L7 (Đêm 3); sim kiểm tra id theo Đêm.
+const LANTERN_IDS = Array.from({ length: 7 }, (_, i) => `L${i + 1}`);
 
 export function normalizeScenario(raw) {
   if (!isObj(raw)) bad('scenario must be a JSON object');
   const out = {
     random_motes: true,
     random_shades: true,
+    random_drifters: true,
     lanterns: [],
   };
 
@@ -41,10 +43,13 @@ export function normalizeScenario(raw) {
       if (p.carried > T.carry_capacity) bad(`player.carried must be <= ${T.carry_capacity}`);
     }
     if (raw.player.flames !== undefined) p.flames = nonNegInt(raw.player.flames, 'player.flames');
+    for (const k of ['invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks']) {
+      if (raw.player[k] !== undefined) p[k] = nonNegInt(raw.player[k], `player.${k}`);
+    }
     out.player = p;
   }
 
-  for (const k of ['random_motes', 'random_shades']) {
+  for (const k of ['random_motes', 'random_shades', 'random_drifters', 'wind_enabled']) {
     if (raw[k] !== undefined) {
       if (typeof raw[k] !== 'boolean') bad(`${k} must be a boolean`);
       out[k] = raw[k];
@@ -56,12 +61,48 @@ export function normalizeScenario(raw) {
     out.motes = raw.motes.map((m, i) => vec3(m, `motes[${i}]`));
   }
 
+  if (raw.drifters !== undefined) {
+    if (!Array.isArray(raw.drifters)) bad('drifters must be an array');
+    out.drifters = raw.drifters.map((d, i) => {
+      if (!isObj(d)) bad(`drifters[${i}] must be an object`);
+      const item = { pos: vec3(d.pos, `drifters[${i}].pos`) };
+      if (d.id !== undefined) item.id = d.id;
+      if (d.state !== undefined) {
+        if (!['idle', 'chase', 'flee'].includes(d.state)) bad(`drifters[${i}].state must be idle, chase or flee`);
+        item.state = d.state;
+      }
+      if (d.stolen !== undefined) item.stolen = nonNegInt(d.stolen, `drifters[${i}].stolen`);
+      return item;
+    });
+  }
+
+  if (raw.charms !== undefined) {
+    if (!Array.isArray(raw.charms)) bad('charms must be an array');
+    out.charms = raw.charms.map((c, i) => {
+      if (!isObj(c) || typeof c.id !== 'string') bad(`charms[${i}].id must be a string`);
+      const item = { id: c.id };
+      if (c.available !== undefined) {
+        if (typeof c.available !== 'boolean') bad(`charms[${i}].available must be a boolean`);
+        item.available = c.available;
+      }
+      if (c.respawn_ticks !== undefined) item.respawn_ticks = nonNegInt(c.respawn_ticks, `charms[${i}].respawn_ticks`);
+      return item;
+    });
+  }
+
   if (raw.shades !== undefined) {
     if (!Array.isArray(raw.shades)) bad('shades must be an array');
     const seen = new Set();
     out.shades = raw.shades.map((s, i) => {
       if (!isObj(s)) bad(`shades[${i}] must be an object`);
       const item = { pos: vec3(s.pos, `shades[${i}].pos`) };
+      if (s.state !== undefined) {
+        if (!['spawning', 'wander', 'chase', 'recoil', 'stunned'].includes(s.state)) {
+          bad(`shades[${i}].state must be one of spawning, wander, chase, recoil, stunned`);
+        }
+        item.state = s.state;
+      }
+      if (s.state_ticks_left !== undefined) item.state_ticks_left = nonNegInt(s.state_ticks_left, `shades[${i}].state_ticks_left`);
       if (s.id !== undefined) {
         if (typeof s.id !== 'string' || s.id === '') bad(`shades[${i}].id must be a non-empty string`);
         if (/^S\d+$/.test(s.id)) bad(`shades[${i}].id must not use the auto-generated S<n> form`);
@@ -83,6 +124,7 @@ export function normalizeScenario(raw) {
         if (typeof l.lit !== 'boolean') bad(`lanterns[${i}].lit must be a boolean`);
         item.lit = l.lit;
       }
+      if (l.deposited !== undefined) item.deposited = nonNegInt(l.deposited, `lanterns[${i}].deposited`);
       return item;
     });
   }
@@ -95,7 +137,7 @@ export function normalizeScenario(raw) {
   return out;
 }
 
-const BUTTONS = ['jump', 'interact', 'pulse', 'dash'];
+const BUTTONS = ['jump', 'interact', 'pulse', 'dash', 'pause'];
 
 export function normalizeInputs(raw) {
   if (!isObj(raw) || !Array.isArray(raw.frames)) bad('inputs must be an object with a "frames" array');

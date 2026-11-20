@@ -97,8 +97,8 @@ test('missing required arguments exit non-zero with a message on stderr', () => 
   assert.match(r.stderr, /--ticks/);
 });
 
-test('--night other than 1 is rejected', () => {
-  const r = cli(['--seed', '1', '--night', '2', '--ticks', '1', '--out', join(dir, 'k.jsonl')]);
+test('--night other than 1, 2 or 3 is rejected (v1.1 adds nights 2 and 3)', () => {
+  const r = cli(['--seed', '1', '--night', '4', '--ticks', '1', '--out', join(dir, 'k.jsonl')]);
   assert.notEqual(r.status, 0);
 });
 
@@ -108,7 +108,7 @@ test('standing still with no shades until dawn ends the night as lost (dawn)', (
   const r = cli(['--seed', '1', '--night', '1', '--scenario', scen, '--ticks', '20000', '--out', out]);
   assert.equal(r.status, 0, r.stderr);
   const ls = lines(out);
-  assert.equal(ls.at(-1).ticks, 180 * 60);
+  assert.equal(ls.at(-1).ticks, 300 * 60); // v1.1: Đêm 1 dài 300 s
   assert.equal(ls.at(-1).state, 'lost');
   assert.deepEqual(ls.find((l) => l.type === 'event' && l.name === 'game_over').data, { result: 'lost', reason: 'dawn' });
 });

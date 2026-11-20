@@ -39,7 +39,7 @@ export function parseArgs(argv) {
   if (!INT.test(raw.seed)) throw new UsageError('--seed must be an integer');
   if (!INT.test(raw.ticks) || Number(raw.ticks) < 0) throw new UsageError('--ticks must be a non-negative integer');
   const night = raw.night ?? '1';
-  if (night !== '1') throw new UsageError('only --night 1 is implemented in Phase 1');
+  if (!['1', '2', '3'].includes(night)) throw new UsageError('--night must be 1, 2 or 3');
   const snapshotEvery = raw.snapshotEvery ?? '10';
   if (!INT.test(snapshotEvery) || Number(snapshotEvery) < 1) {
     throw new UsageError('--snapshot-every must be a positive integer');
@@ -47,6 +47,7 @@ export function parseArgs(argv) {
 
   return {
     seed: Number(raw.seed),
+    night: Number(night),
     ticks: Number(raw.ticks),
     out: raw.out,
     snapshotEvery: Number(snapshotEvery),
@@ -69,6 +70,7 @@ export function main(argv) {
     const args = parseArgs(argv);
     const text = runSimulation({
       seed: args.seed,
+      night: args.night,
       ticks: args.ticks,
       snapshotEvery: args.snapshotEvery,
       scenarioText: readOptional(args.scenarioPath, 'scenario'),

@@ -1,4 +1,4 @@
-// Chạy mô phỏng không cửa sổ và trả về nội dung JSONL theo Test Contract v1.0.
+// Chạy mô phỏng không cửa sổ và trả về nội dung JSONL theo Test Contract v1.1.
 import { createGame, step, snapshot, applyInputFrame } from './sim.js';
 import { normalizeScenario, normalizeInputs, MalformedError } from './scenario.js';
 
@@ -10,11 +10,11 @@ function parseJson(text, what) {
   }
 }
 
-export function runSimulation({ seed, ticks, snapshotEvery = 10, scenarioText = null, inputsText = null }) {
+export function runSimulation({ seed, night = 1, ticks, snapshotEvery = 10, scenarioText = null, inputsText = null }) {
   const scenario = scenarioText == null ? null : normalizeScenario(parseJson(scenarioText, 'scenario'));
   const frames = inputsText == null ? [] : normalizeInputs(parseJson(inputsText, 'inputs'));
 
-  const game = createGame({ seed, scenario });
+  const game = createGame({ seed, night, scenario });
   const lines = [JSON.stringify(snapshot(game))];
   let fi = 0;
 
