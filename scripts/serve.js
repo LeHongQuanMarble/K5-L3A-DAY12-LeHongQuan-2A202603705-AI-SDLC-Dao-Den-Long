@@ -14,7 +14,7 @@ const TYPES = {
 };
 const ALLOWED = ['/web/', '/src/'];
 
-const server = http.createServer((req, res) => {
+export const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
   if (p === '/') {
     // Chuyển hướng để URL có thư mục web/: ./main.js trong index.html phải resolve về /web/main.js.
@@ -39,6 +39,12 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-  console.log(`Đảo Đèn Lồng đang chạy: http://127.0.0.1:${PORT}/`);
-});
+export function startServer(port = PORT, onReady = () => {}) {
+  return server.listen(port, '127.0.0.1', () => {
+    console.log(`Đảo Đèn Lồng đang chạy: http://127.0.0.1:${port}/`);
+    onReady(port);
+  });
+}
+
+// Chạy trực tiếp: node scripts/serve.js
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) startServer();

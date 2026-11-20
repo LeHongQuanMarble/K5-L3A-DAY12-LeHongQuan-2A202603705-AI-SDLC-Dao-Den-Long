@@ -814,6 +814,8 @@ export function step(game) {
     event(game, 'night_start', { night: game.night });
   }
 
+  if (game.bench) return benchStep(game);
+
   // 0. Đọc input (cạnh nhấn); tạm dừng xử lý trước.
   const inp = game.input;
   const prev = game.prevButtons;
@@ -907,4 +909,42 @@ export function snapshot(game) {
     drifters: game.drifters.map((d) => ({ id: d.id, pos: r3v(d.pos), state: d.state, stolen: d.stolen })),
     charms: game.charms.map((c) => ({ id: c.id, available: c.available, respawn_s: r3(c.respawn / 60) })),
   };
+}
+
+// ---------- Cảnh benchmark (Ticket-04 mục 1) ----------
+// Đêm 1, 200 Bóng Mực wander rải đều (seed), 100 đom đóm, L1–L3 sáng với fuel 100, Mây đứng yên tại (0,0,0).
+// Tắt: sinh thêm thực thể, sát thương, nhặt, hao dầu, kết thúc đêm. Bóng Mực vẫn đi theo luật wander.
+export function createBenchGame({ seed = 42 } = {}) {
+  const g = createGame({ seed, night: 1, scenario: { random_motes: false, random_shades: false, random_drifters: false } });
+  g.bench = true;
+  const R = T.island_radius_night1 - 1;
+  for (let i = 0; i < 100; i++) {
+    const r = R * Math.sqrt(g.rng());
+    const a = 2 * Math.PI * g.rng();
+    const x = r * Math.cos(a);
+    const z = r * Math.sin(a);
+    g.motes.push(makeMote(g, [x, 0, z], 'random'));
+  }
+  for (let i = 0; i < 200; i++) {
+    const r = R * Math.sqrt(g.rng());
+    const a = 2 * Math.PI * g.rng();
+    g.shades.push(makeShade(g, undefined, [r * Math.cos(a), 0, r * Math.sin(a)], 'wander'));
+  }
+  for (const l of g.lanterns.slice(0, 3)) {
+    l.lit = true;
+    l.fuelU = FULL_U;
+    l.deposited = T.lantern_cost;
+    l.everLit = true;
+    l.safe = true;
+  }
+  return g;
+}
+
+// Bước của cảnh bench: chỉ Bóng Mực di chuyển và thời gian trôi.
+function benchStep(game) {
+  game.events = [];
+  game.tick += 1;
+  game.simTick += 1;
+  shadesStep(game);
+  return game.events;
 }

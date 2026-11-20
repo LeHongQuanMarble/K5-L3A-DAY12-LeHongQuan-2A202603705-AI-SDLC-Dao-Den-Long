@@ -8,11 +8,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "start": "node scripts/serve.js",
+    "start": "node bin/game.js",
     "headless": "node bin/headless.js",
     "test": "node --test tests/*.test.js",
-    "check": "node --check src/tuning.js && node --check src/world.js && node --check src/sim.js && node --check src/scenario.js && node --check src/headless.js && node --check src/cli.js && node --check web/main.js && node --check scripts/serve.js && node --check scripts/evidence.js && node --check scripts/write-contract.js",
+    "check": "node --check src/tuning.js && node --check src/world.js && node --check src/sim.js && node --check src/scenario.js && node --check src/headless.js && node --check src/cli.js && node --check src/rng.js && node --check src/leaderboard.js && node --check src/settings.js && node --check src/soak.js && node --check src/benchstats.js && node --check web/main.js && node --check scripts/serve.js && node --check scripts/evidence.js && node --check scripts/write-contract.js && node --check bin/game.js && node --check bin/headless.js && node --check bin/soak.js && node --check bin/bench.js",
     "evidence": "node scripts/evidence.js",
-    "contract": "node scripts/write-contract.js"
+    "contract": "node scripts/write-contract.js",
+    "bench": "node --expose-gc bin/bench.js",
+    "soak": "node --expose-gc bin/soak.js --seed 7 --nights 10 --out soak.json",
+    "export-leaderboard": "node bin/game.js --export-leaderboard"
   }
 }

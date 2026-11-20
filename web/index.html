@@ -5,23 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Đảo Đèn Lồng</title>
   <style>
-    html, body { margin: 0; height: 100%; overflow: hidden; background: #07061a; color: #f5e6c8; font-family: system-ui, sans-serif; }
+    :root { --ui-scale: 1; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #07061a; color: #f5e6c8; font-family: system-ui, sans-serif; font-size: 18px; }
+    html.large { --ui-scale: 1.25; }
     canvas { display: block; }
     #hud { position: fixed; top: 12px; left: 12px; right: 12px; display: flex; justify-content: space-between; align-items: flex-start; pointer-events: none; text-shadow: 0 1px 3px #000; }
-    #stats { background: rgba(7,6,26,.6); padding: 8px 12px; border-radius: 8px; line-height: 1.6; }
+    #stats { background: rgba(7,6,26,.6); padding: 8px 12px; border-radius: 8px; line-height: 1.6; font-size: calc(18px * var(--ui-scale)); }
     #stats b { color: #ffc766; }
-    #cool { position: fixed; bottom: 46px; right: 12px; background: rgba(7,6,26,.6); padding: 6px 10px; border-radius: 8px; font-size: 13px; }
-    #msg { margin-top: 8px; min-height: 1.4em; color: #ffe2a8; }
-    #wind { color: #8fa3b8; min-height: 1.2em; }
-    #help { position: fixed; bottom: 10px; left: 12px; font-size: 13px; opacity: .8; background: rgba(7,6,26,.6); padding: 6px 10px; border-radius: 8px; }
-    .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7,6,26,.75); }
+    #time.alarm { color: #ff5a5f; animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { to { visibility: hidden; } }
+    #msg { margin-top: 8px; min-height: 1.4em; color: #ffe2a8; font-size: calc(18px * var(--ui-scale)); }
+    #wind { position: fixed; top: 96px; left: 50%; transform: translateX(-50%); font-size: calc(20px * var(--ui-scale)); color: #8fa3b8; }
+    #cool { position: fixed; bottom: 46px; right: 12px; background: rgba(7,6,26,.6); padding: 6px 10px; border-radius: 8px; font-size: calc(18px * var(--ui-scale)); }
+    #help { position: fixed; bottom: 10px; left: 12px; font-size: calc(18px * var(--ui-scale)); opacity: .9; background: rgba(7,6,26,.6); padding: 6px 10px; border-radius: 8px; }
+    #arrows { position: fixed; inset: 0; pointer-events: none; }
+    .arrow { position: absolute; width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 18px solid #00b3ff; }
+    .overlay { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(7,6,26,.85); overflow: auto; padding: 16px; box-sizing: border-box; }
     .overlay[hidden] { display: none; }
-    .overlay h1 { font-size: 36px; margin: 0 0 8px; color: #ffc766; text-align: center; }
-    .overlay p { margin: 4px 16px 16px; text-align: center; max-width: 560px; }
-    .overlay .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-    button { font: inherit; padding: 10px 18px; border: 0; border-radius: 8px; background: #ffc766; color: #2a1d05; cursor: pointer; }
+    .overlay h1 { font-size: calc(40px * var(--ui-scale)); margin: 0 0 12px; color: #ffc766; text-align: center; }
+    .overlay h2 { font-size: calc(24px * var(--ui-scale)); color: #ffc766; }
+    .overlay p { margin: 4px 16px 16px; text-align: center; max-width: 620px; font-size: calc(18px * var(--ui-scale)); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 8px 0; }
+    button { font: inherit; font-size: calc(18px * var(--ui-scale)); padding: 10px 18px; border: 0; border-radius: 8px; background: #ffc766; color: #2a1d05; cursor: pointer; min-width: 44px; min-height: 44px; }
+    button.ghost { background: #2c2a4a; color: #f5e6c8; }
+    input[type=text] { font: inherit; font-size: calc(18px * var(--ui-scale)); padding: 8px; border-radius: 8px; border: 1px solid #ffc766; background: #12102a; color: #f5e6c8; }
+    table { border-collapse: collapse; font-size: calc(18px * var(--ui-scale)); min-width: min(560px, 92vw); }
+    th, td { padding: 6px 10px; border-bottom: 1px solid #2c2a4a; text-align: left; }
+    #keys td { padding: 4px 8px; }
+    .warn { color: #ffffff; background: #ff5a5f; padding: 4px 8px; border-radius: 6px; font-weight: 700; }
     #flash { position: fixed; inset: 0; background: rgba(120, 20, 160, .45); opacity: 0; pointer-events: none; transition: opacity .4s; }
-    @media (max-width: 600px) { #help { font-size: 12px; } .overlay h1 { font-size: 26px; } #stats { font-size: 13px; } }
+    html.reduced #flash { display: none; }
+    @media (max-width: 600px) { #help { font-size: 16px; } .overlay h1 { font-size: 30px; } }
   </style>
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
@@ -31,27 +45,84 @@
   <div id="hud">
     <div id="stats">
       Đêm <b id="night">1</b> &nbsp;·&nbsp; Đom đóm: <b id="carried">0</b>/<span id="capacity">10</span> &nbsp;·&nbsp; Đèn sáng: <b id="lit">0</b>/<span id="lantern-total">5</span><br>
-      Ngọn lửa: <b id="hp">3</b> &nbsp;·&nbsp; Còn lại: <b id="time">5:00</b> &nbsp;·&nbsp; Điểm đêm: <b id="score">0</b> &nbsp;·&nbsp; Tổng: <b id="total">0</b>
+      Ngọn lửa: <b id="hp">3</b> &nbsp;·&nbsp; Còn lại: <b id="time">4:00</b> &nbsp;·&nbsp; Điểm đêm: <b id="score">0</b> &nbsp;·&nbsp; Tổng: <b id="total">0</b>
     </div>
     <div id="msg"></div>
   </div>
-  <div id="cool">Lướt: <b id="dash-cd">sẵn sàng</b> &nbsp;·&nbsp; Tỏa sáng: <b id="pulse-cd">sẵn sàng</b></div>
   <div id="wind"></div>
-  <div id="help">WASD di chuyển · ←/→ xoay camera · Space nhảy · Shift lướt · E nạp đèn · F tỏa sáng · Esc/P tạm dừng · R chơi lại</div>
+  <div id="cool">Lướt: <b id="dash-cd">sẵn sàng</b> &nbsp;·&nbsp; Tỏa sáng: <b id="pulse-cd">sẵn sàng</b></div>
+  <div id="help"></div>
+  <div id="arrows"></div>
   <div id="flash"></div>
+
+  <div id="menu" class="overlay">
+    <h1>Đảo Đèn Lồng</h1>
+    <p>Mây gom đom đóm, thắp đèn và giữ đảo sáng tới bình minh.</p>
+    <div class="row">
+      <button id="menu-play">Chơi</button>
+      <button id="menu-board" class="ghost">Bảng xếp hạng</button>
+      <button id="menu-settings" class="ghost">Cài đặt</button>
+    </div>
+  </div>
+
   <div id="pause" class="overlay" hidden>
     <h1>Tạm dừng</h1>
     <div class="row">
       <button id="resume">Tiếp tục (Esc)</button>
-      <button id="restart-night">Chơi lại Đêm này</button>
+      <button id="restart-night" class="ghost">Chơi lại Đêm này</button>
+      <button id="pause-settings" class="ghost">Cài đặt</button>
+      <button id="pause-menu" class="ghost">Về menu</button>
     </div>
-    <label style="margin-top:14px"><input id="colorblind" type="checkbox"> Bảng màu dễ phân biệt (Bóng Mực xanh, cảnh báo trắng)</label>
   </div>
+
   <div id="over" class="overlay" hidden>
     <h1 id="over-title"></h1>
     <p id="over-text"></p>
-    <div class="row"><button id="replay">Chơi lại (R)</button></div>
+    <div class="row"><button id="over-next">Tiếp</button></div>
+    <div id="entry" hidden>
+      <p>Nhập tên để lưu điểm (3–12 ký tự: chữ không dấu, số, _):</p>
+      <div class="row">
+        <input id="entry-name" type="text" maxlength="12" autocomplete="off" placeholder="Ten_cua_ban">
+        <button id="entry-save">Lưu điểm</button>
+      </div>
+      <p id="entry-err" class="warn" hidden></p>
+    </div>
+    <div class="row"><button id="over-board" class="ghost">Bảng xếp hạng</button><button id="over-menu" class="ghost">Về menu</button></div>
   </div>
+
+  <div id="board" class="overlay" hidden>
+    <h1>Bảng xếp hạng</h1>
+    <table>
+      <thead><tr><th>#</th><th>Tên</th><th>Điểm</th><th>Đêm thắng</th><th>Ngày</th></tr></thead>
+      <tbody id="board-rows"></tbody>
+    </table>
+    <p id="board-empty">Chưa có điểm nào.</p>
+    <div class="row">
+      <button id="board-export" class="ghost">Tải JSON</button>
+      <button id="board-back">Quay lại</button>
+    </div>
+  </div>
+
+  <div id="settings" class="overlay" hidden>
+    <h1>Cài đặt</h1>
+    <h2>Phím điều khiển</h2>
+    <table id="keys"><tbody></tbody></table>
+    <p id="key-msg" class="warn" hidden></p>
+    <div class="row"><button id="keys-reset" class="ghost">Khôi phục mặc định</button></div>
+    <h2>Trợ năng</h2>
+    <div class="row">
+      <label><input id="opt-reduced" type="checkbox"> Giảm chuyển động (tắt chớp màn hình)</label>
+    </div>
+    <div class="row">
+      <label><input id="opt-large" type="checkbox"> Chữ lớn (×1.25)</label>
+    </div>
+    <div class="row">
+      <label><input id="opt-colorblind" type="checkbox"> Bảng màu dễ phân biệt (Bóng Mực xanh, cảnh báo trắng)</label>
+    </div>
+    <p>Âm thanh chưa có trong bản này.</p>
+    <div class="row"><button id="settings-back">Quay lại</button></div>
+  </div>
+
   <script type="module" src="./main.js"></script>
 </body>
 </html>
