@@ -4,7 +4,7 @@
 - **Phase 1 (Đêm 1):** lõi mô phỏng tất định, headless, bằng chứng từ CLI thật. Mạnh: test đỏ trước, bằng chứng chạy hai lần so sha256.
 - **Phase 2 (ba Đêm):** sửa lỗi đơn vị (giây và tick), thứ tự cạnh nhấn, điểm hồi sinh. Đây là phase nhiều lỗi nhất; test đỏ trước bắt được hầu hết.
 - **Phase 3 (đèn cạn dầu):** đổi luật thắng và điểm; cần sửa 6 test cũ có lý do. Phát hiện scenario đặt sai vị trí làm bằng chứng sai, và lỗi "đầy dầu" do hao một tick.
-- **Phase 4 (phát hành):** bảng xếp hạng, soak, bench, cài đặt. Không đạt FPS và bộ nhớ trong sandbox; video và Release chưa làm.
+- **Phase 4 (phát hành):** bảng xếp hạng, soak, bench, cài đặt, âm thanh, E2E trên Chrome thật (17/17), video demo. Bench chính thức (vsync tắt) và soak chưa đạt ngưỡng trên máy này; nguyên nhân ghi trong đánh giá.
 
 ## Điều hiệu quả và không hiệu quả khi làm với AI
 - Hiệu quả: viết test theo mã AC trước rồi code; ghi giả định cho mọi chỗ mơ hồ; bằng chứng sinh bằng script từ CLI thật, không sửa tay.
@@ -24,12 +24,19 @@
 1. `AGENTS.md` với quy tắc "test trước" và "không sửa tay docs/proof": ngăn việc đổi kỳ vọng cho khớp đầu ra sai.
 2. `scripts/evidence.js` và `scripts/write-contract.js`: bằng chứng và contract luôn sinh từ mã, không sửa tay.
 3. `docs/notes/*-test-changes.md`: mỗi test cũ bị đổi đều có lý do.
-Chưa dùng: skill, hook. Đây là điều cần làm nếu làm lại (ví dụ hook chạy `npm test` sau mỗi lần sửa `src/`).
+Đã thêm ở cuối: hook `PostToolUse` chạy `npm run check` sau mỗi lần sửa, skill `ddl-verify`, và CI (GitHub Actions) chạy test trên Node 20 và 24. Nếu làm lại: đưa skill và hook vào từ phase 1 để chúng tạo ra lịch sử git từ sớm.
 
 ## Token và chi phí (ước tính thô)
 - Không đo được số token chính xác từ phiên. Phần lớn token nằm ở: đọc đề bốn lần, viết lại `src/sim.js` ba lần (Phase 2, 3, 4 có đổi), viết lại `web/main.js` hai lần.
 - Tiết kiệm đã làm: đọc lab board chỉ khi cần; ưu tiên chạy test nhỏ trước; sinh bằng chứng bằng script thay vì mô tả bằng lời.
 - Lãng phí: viết lại toàn bộ file khi chỉ đổi vài dòng (ví dụ `sim.js` khi Phase 3). Lần sau dùng Edit cho thay đổi nhỏ.
+
+## Phát hiện sau khi làm xong (hoàn thiện v1.0.0)
+- Lần đo bench đầu tiên trên SwiftShader (CPU) cho 1.9 fps, dễ bị kết luận nhầm là game chậm. Chạy trên GPU thật cho 365 fps. Luôn ghi rõ backend render.
+- p1 của bench bị kéo xuống bởi các đợt dừng khi vẽ không giới hạn khung; với vsync bật thì không có đợt dừng. Đo cả hai và báo cả hai.
+- Soak: RSS tăng một lần khi biên dịch mã, heap JS phẳng. Đây là đặc tính của tiến trình Node, không phải rò rỉ. Ghi rõ thay vì đổi định nghĩa đo.
+- Bốn lỗi trong E2E không lộ ra khi chỉ đọc mã: race giữa HTML hiện menu và module JS gắn sự kiện; cờ `?test` cần thiết để kiểm tra luồng kết thúc đêm.
+- Video: ghi màn hình bằng screencast chỉ gửi khung khi màn hình đổi, nên phải chụp khung cuối để đoạn tĩnh giữ đúng thời lượng.
 
 ## Nếu làm lại
 1. Viết test cho bảng xếp hạng và cài đặt trước khi viết module.

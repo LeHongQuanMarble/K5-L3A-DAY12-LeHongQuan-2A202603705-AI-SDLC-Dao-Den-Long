@@ -53,3 +53,11 @@
 - Menu chính; màn hình Cài đặt: đổi phím (có báo trùng), khôi phục mặc định, giảm chuyển động, chữ lớn ×1.25, bảng màu dễ phân biệt.
 - Chỉ báo Bóng Mực ngoài màn hình (mũi tên ở mép), 10 s cuối nhấp nháy đỏ, cảnh báo gió, đèn sắp tắt nhấp nháy.
 - Nhập tên khi kết thúc chiến dịch (thắng Đêm 3 hoặc thua).
+
+## Phase 4 bổ sung (hoàn thiện trước v1.0.0)
+
+- Bench: tối ưu bằng `InstancedMesh` cho Bóng Mực và đom đóm; bỏ snapshot khỏi vòng vẽ; thêm `--vsync 1` cho bench tham khảo (ghi `vsync_off: false`).
+- Web: bảng màu theo mã hex của ticket; thanh dầu trên đèn; gợi ý phím E; mũi tên tới đèn chưa sáng; màn giới thiệu từng Đêm; âm thanh tổng hợp; âm lượng, độ nhạy chuột; rung camera khi trúng (tắt khi giảm chuyển động).
+- Kiểm thử E2E bằng Chrome thật (`npm run e2e`, 17 kiểm tra).
+- Quay video demo bằng `scripts/record-demo.mjs`.
+- Harness: hook `PostToolUse` chạy `npm run check` sau mỗi lần sửa; skill `ddl-verify`.

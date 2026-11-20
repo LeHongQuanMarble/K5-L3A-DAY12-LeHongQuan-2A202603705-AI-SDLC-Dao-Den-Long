@@ -1,0 +1,92 @@
+{
+  "passed": 17,
+  "total": 17,
+  "results": [
+    {
+      "name": "menu shown at start",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "settings opens from menu",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "duplicate key is refused with a message",
+      "ok": true,
+      "detail": "phím này đang dùng cho \"Nạp đèn / châm dầu\""
+    },
+    {
+      "name": "free key is assigned",
+      "ok": true,
+      "detail": "Z"
+    },
+    {
+      "name": "large text toggles",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "intro screen shown before the night",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "intro names the night",
+      "ok": true,
+      "detail": "Đêm 1 · Đảo Bến"
+    },
+    {
+      "name": "Enter starts the night",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "HUD shows night 1",
+      "ok": true,
+      "detail": "1"
+    },
+    {
+      "name": "Esc pauses",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "resume closes the pause screen",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "defeat asks for a name",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "name shorter than 3 is refused",
+      "ok": true,
+      "detail": "Tên cần 3–12 ký tự: chữ không dấu, số hoặc _"
+    },
+    {
+      "name": "saved name opens the leaderboard",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "leaderboard has the saved entry",
+      "ok": true,
+      "detail": "rows=1"
+    },
+    {
+      "name": "leaderboard survives a reload",
+      "ok": true,
+      "detail": "rows=1 name=Mayy_Tester stored=170 bytes"
+    },
+    {
+      "name": "no JavaScript errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "date": "2026-11-20T10:10:54.664Z"
+}

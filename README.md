@@ -1,7 +1,7 @@
 # Đảo Đèn Lồng
 
 > Game 3D góc nhìn thứ ba, làm cho lab **Day 12 · AI SDLC**. Cá nhân, 1 MSSV.
-> **Video demo:** chưa có (sẽ đặt ở đầu README khi quay xong; xem mục Trạng thái).
+> **Video demo (dưới 5 phút):** [docs/demo/demo.mp4](docs/demo/demo.mp4) — chơi trực tiếp, cảnh benchmark, và bằng chứng test/bench/soak.
 
 ![Cảnh benchmark Đêm 1, 1280×720](docs/proof/phase-4/bench-scene-1280x720.png)
 
@@ -52,7 +52,8 @@ Trong Cài đặt: đổi từng phím (báo khi trùng phím), khôi phục m�
 ## Kiểm chứng
 
 ```bash
-npm test          # 152 test (node:test): luật, contract, bảng xếp hạng, cài đặt, bench
+npm test          # test node:test: luật, contract, bảng xếp hạng, cài đặt, bench
+npm run e2e       # kiểm thử trình duyệt thật (cần google-chrome): 17 kiểm tra
 npm run check     # kiểm tra cú pháp
 npm run evidence  # chạy kịch bản headless bằng CLI thật -> docs/proof/phase-3/
 ```
@@ -74,7 +75,14 @@ node --expose-gc bin/bench.js --seed 42 --duration 30 --out bench.json
 
 Cảnh chuẩn: Đêm 1, 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng, Mây đứng yên, camera vòng tròn 30 m ở Y = 15, 15 s một vòng. Ngưỡng trên máy chấm: avg_fps ≥ 60, p1_low_fps ≥ 30, load_ms ≤ 10000. Vsync được tắt (`vsync_off: true`).
 
-**Kết quả đo trong sandbox (chỉ tham khảo, render bằng CPU):** [docs/proof/phase-4/bench.json](docs/proof/phase-4/bench.json). Không đạt ngưỡng trên máy này; máy chấm sẽ đo lại.
+**Kết quả đo (iGPU Intel Iris Xe, Chrome headless, 30 s):**
+
+| Chế độ | avg_fps | p1_low_fps | frame_ms_p95 | Ghi chú |
+|---|---|---|---|---|
+| Chính thức, vsync tắt | 365.6 | 4.4 | 1.2 | [bench.json](docs/proof/phase-4/bench.json). p1 thấp do các đợt dừng 200–500 ms khi vẽ không giới hạn khung trên máy này |
+| Tham khảo, vsync bật (`--vsync 1`) | 60.0 | 59.5 | 16.8 | [bench-vsync-on.json](docs/proof/phase-4/bench-vsync-on.json) |
+
+Chi tiết nguyên nhân và cách đo lại: [docs/notes/phase-4-eval.md](docs/notes/phase-4-eval.md). Máy chấm sẽ đo lại trên cấu hình của giảng viên.
 
 ### Soak
 
@@ -82,7 +90,7 @@ Cảnh chuẩn: Đêm 1, 200 Bóng Mực wander, 100 đom đóm, L1–L3 sáng, 
 node --expose-gc bin/soak.js --seed 7 --nights 10 --out soak.json
 ```
 
-Chạy 10 Đêm liên tiếp trong một tiến trình. Kết quả: [docs/proof/phase-4/soak.json](docs/proof/phase-4/soak.json). Crash = 0, nhưng bộ nhớ tăng 51 → 67 MB, vượt ngưỡng 1.2× (xem đánh giá).
+Chạy 10 Đêm liên tiếp trong một tiến trình. Kết quả: [docs/proof/phase-4/soak.json](docs/proof/phase-4/soak.json). Crash = 0; bộ nhớ tăng 51 → 67 MB, vượt ngưỡng 1.2× (heap JavaScript phẳng, phần tăng là bộ nhớ tiến trình một lần khi biên dịch; xem đánh giá).
 
 ### Bảng xếp hạng
 
@@ -117,16 +125,15 @@ docs/proof/          bằng chứng đã sinh (phase-1..4, bench, soak, ảnh)
 CHANGELOG.md, CREDITS.md, LICENSE, AGENTS.md
 ```
 
-## Chưa có trong v1.0.0
+## Còn thiếu (ghi trung thực)
 
-- Âm thanh (nhạc nền và hiệu ứng).
-- Kiểm tra trên trình duyệt của phần menu, đổi phím, nhập tên và chữ lớn (đã viết, chưa thao tác tay).
-- Video demo.
-- Đạt ngưỡng FPS và bộ nhớ trên máy chấm (chưa đo trên GPU).
+- Ngưỡng FPS với vsync tắt (p1 ≥ 30) chưa đạt trên iGPU này; đạt khi vsync bật.
+- Ngưỡng bộ nhớ của soak (≤ 1.2×) chưa đạt; nguyên nhân và các thử nghiệm đã làm nằm trong đánh giá.
+- Chưa kiểm tra trên Windows và macOS; chưa đo trên máy chấm của giảng viên.
 
 ## Sáng tạo của tôi
 
-Chưa có phần sáng tạo ngoài luật của ticket. Các mục trợ năng và bảng xếp hạng là phần mở rộng theo Ticket-04.
+Đoạn giới thiệu từng Đêm (văn bản do tôi viết), âm thanh tổng hợp, và bảng màu theo ticket. Luật và số liệu không đổi so với ticket.
 
 ## Giấy phép và nguồn
 
